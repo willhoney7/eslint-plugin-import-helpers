@@ -1,6 +1,6 @@
 'use strict';
 
-const { default: importType } = require('../util/import-type');
+const { resolveImportType, isRegularExpressionGroup } = require('../util/import-type');
 const isStaticRequire = require('../util/static-require');
 // import docsUrl from '../docsUrl'
 
@@ -286,12 +286,10 @@ function mutateRanksToAlphabetize(imported, order, ignoreCase) {
 		}
 	});
 
-	// assign globally unique rank to each import
-	let newRank = 0;
+	// add decimal ranking to sort within the group
 	const alphabetizedRanks = groupRanks.sort().reduce(function(acc, groupRank) {
-		groupedByRanks[groupRank].forEach(function(importedItemName) {
-			acc[importedItemName] = newRank;
-			newRank += 1;
+		groupedByRanks[groupRank].forEach(function(importedItemName, index) {
+			acc[importedItemName] = +groupRank + index / 100;
 		});
 		return acc;
 	}, {});
@@ -302,14 +300,20 @@ function mutateRanksToAlphabetize(imported, order, ignoreCase) {
 	});
 }
 
-// DETECTING
-
-function computeRank(context, ranks, name, type) {
-	return ranks[importType(name, context)] + (type === 'import' ? 0 : 100);
+function getRegExpGroups(ranks) {
+	return Object.keys(ranks)
+		.filter(isRegularExpressionGroup)
+		.map((rank) => [rank, new RegExp(rank.slice(1, rank.length - 1))]);
 }
 
-function registerNode(context, node, name, type, ranks, imported) {
-	const rank = computeRank(context, ranks, name, type);
+// DETECTING
+
+function computeRank(context, ranks, regExpGroups, name, type) {
+	return ranks[resolveImportType(name, context, regExpGroups)] + (type === 'import' ? 0 : 100);
+}
+
+function registerNode(context, node, name, type, ranks, regExpGroups, imported) {
+	const rank = computeRank(context, ranks, regExpGroups, name, type);
 	if (rank !== -1) {
 		imported.push({ name, rank, node });
 	}
@@ -330,11 +334,11 @@ function convertGroupsToRanks(groups) {
 			group = [group];
 		}
 		group.forEach(function(groupItem) {
-			if (types.indexOf(groupItem) === -1) {
+			if (!isRegularExpressionGroup(groupItem) && types.indexOf(groupItem) === -1) {
 				throw new Error(
-					'Incorrect configuration of the rule: Unknown type `' +
-						JSON.stringify(groupItem) +
-						'`'
+					`Incorrect configuration of the rule: Unknown type '${JSON.stringify(
+						groupItem
+					)}'. For a regular expression, wrap the string in '/', ex: '/shared/'`
 				);
 			}
 			if (res[groupItem] !== undefined) {
@@ -399,18 +403,21 @@ function makeNewlinesBetweenReport(context, imported, newlinesBetweenImports) {
 	imported.slice(1).forEach(function(currentImport) {
 		const emptyLinesBetween = getNumberOfEmptyLinesBetween(currentImport, previousImport);
 
+		const currentGroupRank = Math.floor(currentImport.rank);
+		const previousGroupRank = Math.floor(previousImport.rank);
+
 		if (
 			newlinesBetweenImports === 'always' ||
 			newlinesBetweenImports === 'always-and-inside-groups'
 		) {
-			if (currentImport.rank !== previousImport.rank && emptyLinesBetween === 0) {
+			if (currentGroupRank !== previousGroupRank && emptyLinesBetween === 0) {
 				context.report({
 					node: previousImport.node,
 					message: 'There should be at least one empty line between import groups',
 					fix: fixNewLineAfterImport(context, previousImport, currentImport)
 				});
 			} else if (
-				currentImport.rank === previousImport.rank &&
+				currentGroupRank === previousGroupRank &&
 				emptyLinesBetween > 0 &&
 				newlinesBetweenImports !== 'always-and-inside-groups'
 			) {
@@ -507,10 +514,12 @@ module.exports = {
 		const newlinesBetweenImports = options['newlines-between'] || 'ignore';
 		let alphabetize;
 		let ranks;
+		let regExpGroups;
 
 		try {
 			alphabetize = getAlphabetizeConfig(options);
 			ranks = convertGroupsToRanks(options.groups || defaultGroups);
+			regExpGroups = getRegExpGroups(ranks);
 		} catch (error) {
 			// Malformed configuration
 			return {
@@ -534,7 +543,7 @@ module.exports = {
 				if (node.specifiers.length) {
 					// Ignoring unassigned imports
 					const name = node.source.value;
-					registerNode(context, node, name, 'import', ranks, imported);
+					registerNode(context, node, name, 'import', ranks, regExpGroups, imported);
 				}
 			},
 			CallExpression: function handleRequires(node) {
@@ -542,7 +551,7 @@ module.exports = {
 					return;
 				}
 				const name = node.arguments[0].value;
-				registerNode(context, node, name, 'require', ranks, imported);
+				registerNode(context, node, name, 'require', ranks, regExpGroups, imported);
 			},
 			'Program:exit': function reportAndReset() {
 				if (alphabetize.order !== 'ignore') {

@@ -81,7 +81,16 @@ const typeTest = cond([
 	[constant(true), constant('unknown')]
 ]);
 
-function resolveImportType(name, context) {
+function isRegularExpressionGroup(group) {
+	return group && group[0] === '/' && group[group.length - 1] === '/' && group.length > 1;
+}
+
+function resolveImportType(name, context, regExpGroups) {
+	let matchingRegExpGroup = regExpGroups.find(([_groupName, regExp]) => regExp.test(name));
+	if (matchingRegExpGroup) {
+		return matchingRegExpGroup[0];
+	}
+
 	return typeTest(name, context.settings, resolve(name, context));
 }
 
@@ -89,6 +98,7 @@ module.exports = {
 	isAbsolute,
 	isBuiltIn,
 	isExternalModuleMain,
+	isRegularExpressionGroup,
 	isScopedMain,
-	default: resolveImportType
+	resolveImportType
 };
