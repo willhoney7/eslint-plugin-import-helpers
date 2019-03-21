@@ -1415,7 +1415,7 @@ ruleTester.run('order', rule, {
 				]
 			})
 		),
-		// fix incorrect order with typescript-eslint-parser
+		// fix incorrect order with @typescript-eslint/parser
 		test({
 			code: `
         var async = require('async');
@@ -1425,7 +1425,7 @@ ruleTester.run('order', rule, {
         var fs = require('fs');
         var async = require('async');
       `,
-			parser: 'typescript-eslint-parser',
+			parser: '@typescript-eslint/parser',
 			errors: [
 				{
 					ruleId: 'order',

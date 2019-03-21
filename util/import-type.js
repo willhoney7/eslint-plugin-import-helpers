@@ -1,10 +1,8 @@
 const cond = require('lodash/cond');
-// const coreModules = require('resolve/lib/core');
+const coreModules = require('resolve/lib/core');
 const { join } = require('path');
 
 const resolve = require('eslint-module-utils/resolve').default;
-
-const coreModules = {};
 
 function constant(value) {
 	return () => value;
