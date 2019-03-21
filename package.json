@@ -1,0 +1,22 @@
+{
+	"name": "eslint-import-rules",
+	"version": "0.0.1",
+	"description": "ESLint Rules to Aid with Imports",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"keywords": [
+		"eslint",
+		"import"
+	],
+	"author": "",
+	"license": "MIT",
+	"devDependencies": {
+		"eslint": "^5.15.3",
+		"lodash": "^4.17.11"
+	},
+	"dependencies": {
+		"eslint-module-utils": "^2.3.0"
+	}
+}
