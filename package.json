@@ -2,8 +2,9 @@
 	"name": "eslint-plugin-import-helpers",
 	"version": "0.1.1",
 	"description": "ESLint Rules to Aid with Imports",
-	"main": "index.js",
+	"main": "lib/index.js",
 	"scripts": {
+		"prepublish": "gulp prepublish",
 		"test": "node ./test/run-all"
 	},
 	"keywords": [
@@ -15,9 +16,16 @@
 	},
 	"author": "Will Honey",
 	"license": "MIT",
+	"peerDependencies": {
+		"eslint": "2.x - 5.x"
+	},
 	"devDependencies": {
+		"@babel/core": "^7.4.0",
 		"@typescript-eslint/parser": "^1.5.0",
 		"eslint": "^5.15.3",
+		"gulp": "^3.9.0",
+		"gulp-babel": "6.1.2",
+		"rimraf": "2.5.2",
 		"typescript": "^3.3.4000"
 	},
 	"dependencies": {
