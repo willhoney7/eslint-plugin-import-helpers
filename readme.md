@@ -6,7 +6,40 @@ This package was created to supplement the rules provided by [eslint-plugin-impo
 
 # Rules
 
--   enforce a _configurable_ convention in module import order ([`order-imports`])
+#### [`order-imports`]
+Enforce a _configurable_ convention in module import order 
+
+```javascript
+// Given ESLint Config
+rules: {  
+  'import-helpers/order-imports': [
+      'warn',
+      {
+          'newlines-between': 'always', // new line between groups
+          groups: [
+              ['builtin', 'external', 'internal'],
+              '/^@shared/',
+              ['parent', 'sibling', 'index'],
+          ],
+          alphabetize: { order: 'asc', ignoreCase: true },
+      },
+  ],
+}
+
+// will fix
+import SiblingComponent from './SiblingComponent';
+import lodash from 'lodash';
+import SharedComponent from '@shared/components/SharedComponent';
+import React from 'react';
+  
+// into
+import lodash from 'lodash';
+import React from 'react';
+  
+import SharedComponent from '@shared/components/SharedComponent';
+
+import SiblingComponent from './SiblingComponent';
+```
 
 [`order-imports`]: ./docs/rules/order-imports.md
 
@@ -26,7 +59,6 @@ npm install eslint-plugin-import-helpers --save-dev
 To add a rule, update your `.eslintrc.(yml|json|js)`:
 
 ```yaml
----
 plugins:
     - import-helpers
 
