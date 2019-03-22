@@ -45,6 +45,28 @@ ruleTester.run('order', rule, {
 		}),
 		test({
 			code: `
+				import fs from 'fs';
+
+				import async, {foo1} from 'async';
+				
+				import relParent3 from '@shared';
+				
+				import relParent1 from '../foo';
+				import relParent2, {foo2} from '../foo/bar';
+
+				import sibling, {foo3} from './foo';
+				
+				import index from './';
+				`,
+			options: [
+				{
+					groups: ['builtin', 'external', '/^@shared/', 'parent', 'sibling', 'index'],
+					'newlines-between': 'always'
+				}
+			]
+		}),
+		test({
+			code: `
 				import async, {foo1} from 'async';
 
 				import fs from 'fs';

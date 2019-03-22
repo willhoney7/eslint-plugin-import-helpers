@@ -336,9 +336,9 @@ function convertGroupsToRanks(groups) {
 		group.forEach(function(groupItem) {
 			if (!isRegularExpressionGroup(groupItem) && types.indexOf(groupItem) === -1) {
 				throw new Error(
-					`Incorrect configuration of the rule: Unknown type '${JSON.stringify(
+					`Incorrect configuration of the rule: Unknown type ${JSON.stringify(
 						groupItem
-					)}'. For a regular expression, wrap the string in '/', ex: '/shared/'`
+					)}. For a regular expression, wrap the string in '/', ex: '/shared/'`
 				);
 			}
 			if (res[groupItem] !== undefined) {
@@ -403,7 +403,7 @@ function makeNewlinesBetweenReport(context, imported, newlinesBetweenImports) {
 	imported.slice(1).forEach(function(currentImport) {
 		const emptyLinesBetween = getNumberOfEmptyLinesBetween(currentImport, previousImport);
 
-		const currentGroupRank = Math.floor(currentImport.rank);
+		const currentGroupRank = Math.floor(currentImport.rank); // each group rank is a whole number, within a group, decimals indicate subranking. yeah.
 		const previousGroupRank = Math.floor(previousImport.rank);
 
 		if (

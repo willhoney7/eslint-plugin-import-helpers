@@ -909,7 +909,8 @@ ruleTester.run('order', rule, {
 			errors: [
 				{
 					ruleId: 'order',
-					message: 'Incorrect configuration of the rule: Unknown type `"UNKNOWN"`'
+					message:
+						"Incorrect configuration of the rule: Unknown type \"UNKNOWN\". For a regular expression, wrap the string in '/', ex: '/shared/'"
 				}
 			]
 		}),
@@ -923,7 +924,8 @@ ruleTester.run('order', rule, {
 			errors: [
 				{
 					ruleId: 'order',
-					message: 'Incorrect configuration of the rule: Unknown type `["builtin"]`'
+					message:
+						"Incorrect configuration of the rule: Unknown type [\"builtin\"]. For a regular expression, wrap the string in '/', ex: '/shared/'"
 				}
 			]
 		}),
@@ -937,7 +939,8 @@ ruleTester.run('order', rule, {
 			errors: [
 				{
 					ruleId: 'order',
-					message: 'Incorrect configuration of the rule: Unknown type `2`'
+					message:
+						"Incorrect configuration of the rule: Unknown type 2. For a regular expression, wrap the string in '/', ex: '/shared/'"
 				}
 			]
 		}),
