@@ -23,8 +23,7 @@ or if you manage ESLint as a dev dependency:
 npm install eslint-plugin-import-helpers --save-dev
 ```
 
-All rules are off by default. However, you may configure them manually
-in your `.eslintrc.(yml|json|js)`, or extend one of the canned configs:
+To add a rule, update your `.eslintrc.(yml|json|js)`:
 
 ```yaml
 ---
@@ -32,7 +31,7 @@ plugins:
     - import-helpers
 
 rules:
-    import-helpers/order-imports: [2]
+    import-helpers/order-imports: [2, { groups: [ ... ] } ]
     # etc...
 ```
 
