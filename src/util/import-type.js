@@ -1,5 +1,5 @@
 const cond = require('lodash/cond');
-const coreModules = require('resolve/lib/core');
+const coreModules = require('builtin-modules/static');
 const { join } = require('path');
 
 const resolve = require('eslint-module-utils/resolve').default;
@@ -24,7 +24,7 @@ function isAbsolute(name) {
 function isBuiltIn(name, settings) {
 	const base = baseModule(name);
 	const extras = (settings && settings['import/core-modules']) || [];
-	return coreModules[base] || extras.indexOf(base) > -1;
+	return coreModules.indexOf(base) > -1 || extras.indexOf(base) > -1;
 }
 
 function isExternalPath(path, name, settings) {

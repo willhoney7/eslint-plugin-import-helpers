@@ -10,17 +10,23 @@ ruleTester.run('order', rule, {
 		// Default order using import
 		test({
 			code: `
-		    import fs from 'fs';
-		    import async, {foo1} from 'async';
+				import fs from 'fs';
+				
+				import async, {foo1} from 'async';
+				
 		    import relParent1 from '../foo';
-		    import relParent2, {foo2} from '../foo/bar';
-		    import relParent3 from '@shared';
-		    import sibling, {foo3} from './foo';
+				import relParent2, {foo2} from '../foo/bar';
+				
+				import relParent3 from '@shared';
+				
+				import sibling, {foo3} from './foo';
+				
 				import index from './';`,
 			options: [
 				{
 					groups: ['builtin', 'external', 'parent', '/@shared/', 'sibling', 'index'],
-					alphabetize: { order: 'asc', ignoreCase: true }
+					alphabetize: { order: 'asc', ignoreCase: true },
+					'newlines-between': 'always'
 				}
 			]
 		}),

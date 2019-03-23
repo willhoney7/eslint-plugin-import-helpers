@@ -7,11 +7,12 @@ This package was created to supplement the rules provided by [eslint-plugin-impo
 # Rules
 
 #### [`order-imports`]
-Enforce a _configurable_ convention in module import order 
+
+Enforce a _configurable_ convention in module import order
 
 ```javascript
 // Given ESLint Config
-rules: {  
+rules: {
   'import-helpers/order-imports': [
       'warn',
       {
@@ -31,11 +32,11 @@ import SiblingComponent from './SiblingComponent';
 import lodash from 'lodash';
 import SharedComponent from '@shared/components/SharedComponent';
 import React from 'react';
-  
+
 // into
 import lodash from 'lodash';
 import React from 'react';
-  
+
 import SharedComponent from '@shared/components/SharedComponent';
 
 import SiblingComponent from './SiblingComponent';
@@ -58,13 +59,25 @@ npm install eslint-plugin-import-helpers --save-dev
 
 To add a rule, update your `.eslintrc.(yml|json|js)`:
 
-```yaml
-plugins:
-    - import-helpers
-
-rules:
-    import-helpers/order-imports: [2, { groups: [ ... ] } ]
-    # etc...
+```js
+{
+    // .eslintrc.js
+    plugins: ['eslint-plugin-import-helpers'],
+    rules: {
+        'import-helpers/order-imports': [
+            'warn',
+            { // example configuration
+                'newlines-between': 'always',
+                groups: [
+                    ['builtin', 'external', 'internal'],
+                    '/^@shared/',
+                    ['parent', 'sibling', 'index'],
+                ],
+                alphabetize: { order: 'asc', ignoreCase: true },
+            },
+        ],
+    }
+}
 ```
 
 # Settings
@@ -73,26 +86,34 @@ rules:
 
 #### `import/core-modules`
 
-An array of additional modules to consider as "core" modules--modules that should
-be considered resolved but have no path on the filesystem (ie `builtins`). Your resolver may
-already define some of these (for example, the Node resolver knows about `fs` and
+An array of additional modules to consider as core/builtin modules--modules that should
+be considered resolved but have no path on the filesystem. Current, we are using the [node resolver](https://github.com/benmosher/eslint-plugin-import/tree/master/resolvers/node), which knows about `fs` and
 `path`), so you need not redefine those.
 
 For example, Electron exposes an `electron` module:
 
 ```js
-import 'electron'; // without extra config, will be flagged as unresolved!
+import 'electron'; // without extra config, will be flagged as an "internal" module
 ```
 
 that would otherwise be unresolved. To avoid this, you may provide `electron` as a
 core module:
 
-```yaml
-# .eslintrc.yml
-settings:
-    import/core-modules: [electron]
+```js
+{
+    // .eslintrc.js
+    settings: {
+        'core-modules': ['electron']
+    },
+    plugins: [ ... ],
+    rules: { ... }
+}
 ```
 
 #### `import/external-module-folders`
 
 An array of folders. Resolved modules only from those folders will be considered as "external". By default - `["node_modules"]`. Makes sense if you have configured your path or webpack to handle your internal paths differently and want to considered modules from some folders, for example `bower_components` or `jspm_modules`, as "external".
+
+# TypeScript
+
+To use this plugin with TypeScript, you must use the TypeScript parser for ESLint. See [@typescript-eslint/parser](https://github.com/typescript-eslint/typescript-eslint/tree/master/packages/parser) for more details.
