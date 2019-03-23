@@ -87,8 +87,7 @@ To add a rule, update your `.eslintrc.(yml|json|js)`:
 #### `import/core-modules`
 
 An array of additional modules to consider as core/builtin modules--modules that should
-be considered resolved but have no path on the filesystem. Current, we are using the [node resolver](https://github.com/benmosher/eslint-plugin-import/tree/master/resolvers/node), which knows about `fs` and
-`path`), so you need not redefine those.
+be considered resolved but have no path on the filesystem. Currently, we are using the [builtin-modules](https://github.com/sindresorhus/builtin-modules), which knows about `fs`, `path`, and more), so you need not redefine those.
 
 For example, Electron exposes an `electron` module:
 
