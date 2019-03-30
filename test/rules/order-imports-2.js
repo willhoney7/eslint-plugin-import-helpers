@@ -10,9 +10,8 @@ ruleTester.run('order', rule, {
 		// Default order using import
 		test({
 			code: `
-				import fs from 'fs';
-				
 				import async, {foo1} from 'async';
+				import fs from 'fs';
 				
 		    import relParent1 from '../foo';
 				import relParent2, {foo2} from '../foo/bar';
@@ -24,7 +23,7 @@ ruleTester.run('order', rule, {
 				import index from './';`,
 			options: [
 				{
-					groups: ['builtin', 'external', 'parent', '/@shared/', 'sibling', 'index'],
+					groups: ['module', 'parent', '/@shared/', 'sibling', 'index'],
 					alphabetize: { order: 'asc', ignoreCase: true },
 					newlinesBetween: 'always'
 				}
@@ -43,7 +42,7 @@ ruleTester.run('order', rule, {
 				import sibling, {foo3} from './foo';`,
 			options: [
 				{
-					groups: [['builtin', 'external'], '/@shared/', ['parent', 'sibling', 'index']],
+					groups: [['module'], '/@shared/', ['parent', 'sibling', 'index']],
 					alphabetize: { order: 'asc', ignoreCase: true },
 					newlinesBetween: 'always'
 				}
@@ -52,7 +51,6 @@ ruleTester.run('order', rule, {
 		test({
 			code: `
 				import fs from 'fs';
-
 				import async, {foo1} from 'async';
 				
 				import relParent3 from '@shared';
@@ -66,7 +64,7 @@ ruleTester.run('order', rule, {
 				`,
 			options: [
 				{
-					groups: ['builtin', 'external', '/^@shared/', 'parent', 'sibling', 'index'],
+					groups: ['module', '/^@shared/', 'parent', 'sibling', 'index'],
 					newlinesBetween: 'always'
 				}
 			]
@@ -88,7 +86,7 @@ ruleTester.run('order', rule, {
 				import sibling, {foo3} from './foo';`,
 			options: [
 				{
-					groups: [['builtin', 'external'], '/@shared/', ['parent', 'sibling', 'index']],
+					groups: [['module'], '/@shared/', ['parent', 'sibling', 'index']],
 					alphabetize: { order: 'asc', ignoreCase: true },
 					newlinesBetween: 'always-and-inside-groups'
 				}
@@ -112,7 +110,7 @@ ruleTester.run('order', rule, {
 		  `,
 			options: [
 				{
-					groups: ['external', 'index'],
+					groups: ['module', 'index'],
 					alphabetize: { order: 'desc', ignoreCase: true }
 				}
 			],

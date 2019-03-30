@@ -5,7 +5,8 @@
 	"main": "lib/index.js",
 	"scripts": {
 		"prepublish": "gulp prepublish",
-		"test": "node ./test/run-all"
+		"test": "ts-node ./test/run-all",
+		"test-new": "ts-node ./test/rules/order-imports-2"
 	},
 	"keywords": [
 		"eslint",
@@ -22,13 +23,14 @@
 		"eslint": "2.x - 5.x"
 	},
 	"devDependencies": {
-		"@babel/core": "^7.4.0",
+		"@types/node": "^11.12.2",
 		"@typescript-eslint/parser": "^1.5.0",
 		"eslint": "^5.15.3",
 		"gulp": "^3.9.0",
-		"gulp-babel": "6.1.2",
+		"gulp-typescript": "^5.0.1",
 		"rimraf": "2.5.2",
-		"typescript": "^3.3.4000"
+		"ts-node": "^8.0.3",
+		"typescript": "^3.4.1"
 	},
 	"dependencies": {
 		"builtin-modules": "^1.1.1",

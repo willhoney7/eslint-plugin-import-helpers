@@ -1,9 +1,7 @@
-'use strict';
-
-const { resolveImportType, isRegularExpressionGroup } = require('../util/import-type');
+import { resolveImportType, isRegularExpressionGroup } from '../util/import-type';
 const isStaticRequire = require('../util/static-require');
 
-const defaultGroups = ['builtin', 'external', 'parent', 'sibling', 'index'];
+const defaultGroups = ['module', 'parent', 'sibling', 'index'];
 
 // REPORTING AND FIXING
 
@@ -307,12 +305,12 @@ function getRegExpGroups(ranks) {
 
 // DETECTING
 
-function computeRank(context, ranks, regExpGroups, name, type) {
-	return ranks[resolveImportType(name, context, regExpGroups)] + (type === 'import' ? 0 : 100);
+function computeRank(ranks, regExpGroups, name, type) {
+	return ranks[resolveImportType(name, regExpGroups)] + (type === 'import' ? 0 : 100);
 }
 
-function registerNode(context, node, name, type, ranks, regExpGroups, imported) {
-	const rank = computeRank(context, ranks, regExpGroups, name, type);
+function registerNode(node, name, type, ranks, regExpGroups, imported) {
+	const rank = computeRank(ranks, regExpGroups, name, type);
 	if (rank !== -1) {
 		imported.push({ name, rank, node });
 	}
@@ -322,18 +320,16 @@ function isInVariableDeclarator(node) {
 	return node && (node.type === 'VariableDeclarator' || isInVariableDeclarator(node.parent));
 }
 
-const types = ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'];
+const knownTypes = ['absolute', 'module', 'parent', 'sibling', 'index'];
 
 // Creates an object with type-rank pairs.
-// Example: { index: 0, sibling: 1, parent: 1, external: 1, builtin: 2, internal: 2 }
+// Example: { index: 0, sibling: 1, parent: 1, module: 2 }
 // Will throw an error if it: contains a type that does not exist in the list, does not start and end with '/', or has a duplicate
 function convertGroupsToRanks(groups) {
 	const rankObject = groups.reduce(function(res, group, index) {
-		if (typeof group === 'string') {
-			group = [group];
-		}
+		if (typeof group === 'string') group = [group]; // wrap them all in arrays
 		group.forEach(function(groupItem) {
-			if (!isRegularExpressionGroup(groupItem) && types.indexOf(groupItem) === -1) {
+			if (!isRegularExpressionGroup(groupItem) && knownTypes.indexOf(groupItem) === -1) {
 				throw new Error(
 					`Incorrect configuration of the rule: Unknown type ${JSON.stringify(
 						groupItem
@@ -350,7 +346,7 @@ function convertGroupsToRanks(groups) {
 		return res;
 	}, {});
 
-	const omittedTypes = types.filter(function(type) {
+	const omittedTypes = knownTypes.filter(function(type) {
 		return rankObject[type] === undefined;
 	});
 
@@ -543,7 +539,7 @@ module.exports = {
 				if (node.specifiers.length) {
 					// Ignoring unassigned imports
 					const name = node.source.value;
-					registerNode(context, node, name, 'import', ranks, regExpGroups, imported);
+					registerNode(node, name, 'import', ranks, regExpGroups, imported);
 				}
 			},
 			CallExpression: function handleRequires(node) {
@@ -551,7 +547,7 @@ module.exports = {
 					return;
 				}
 				const name = node.arguments[0].value;
-				registerNode(context, node, name, 'require', ranks, regExpGroups, imported);
+				registerNode(node, name, 'require', ranks, regExpGroups, imported);
 			},
 			'Program:exit': function reportAndReset() {
 				if (alphabetize.order !== 'ignore') {
