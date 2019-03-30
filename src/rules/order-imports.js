@@ -487,7 +487,7 @@ module.exports = {
 					groups: {
 						type: 'array'
 					},
-					'newlines-between': {
+					newlinesBetween: {
 						enum: ['ignore', 'always', 'always-and-inside-groups', 'never']
 					},
 					alphabetize: {
@@ -511,7 +511,7 @@ module.exports = {
 
 	create: function importOrderRule(context) {
 		const options = context.options[0] || {};
-		const newlinesBetweenImports = options['newlines-between'] || 'ignore';
+		const newlinesBetweenImports = options.newlinesBetween || 'ignore';
 		let alphabetize;
 		let ranks;
 		let regExpGroups;

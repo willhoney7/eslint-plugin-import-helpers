@@ -26,7 +26,7 @@ ruleTester.run('order', rule, {
 				{
 					groups: ['builtin', 'external', 'parent', '/@shared/', 'sibling', 'index'],
 					alphabetize: { order: 'asc', ignoreCase: true },
-					'newlines-between': 'always'
+					newlinesBetween: 'always'
 				}
 			]
 		}),
@@ -45,7 +45,7 @@ ruleTester.run('order', rule, {
 				{
 					groups: [['builtin', 'external'], '/@shared/', ['parent', 'sibling', 'index']],
 					alphabetize: { order: 'asc', ignoreCase: true },
-					'newlines-between': 'always'
+					newlinesBetween: 'always'
 				}
 			]
 		}),
@@ -67,7 +67,7 @@ ruleTester.run('order', rule, {
 			options: [
 				{
 					groups: ['builtin', 'external', '/^@shared/', 'parent', 'sibling', 'index'],
-					'newlines-between': 'always'
+					newlinesBetween: 'always'
 				}
 			]
 		}),
@@ -90,7 +90,7 @@ ruleTester.run('order', rule, {
 				{
 					groups: [['builtin', 'external'], '/@shared/', ['parent', 'sibling', 'index']],
 					alphabetize: { order: 'asc', ignoreCase: true },
-					'newlines-between': 'always-and-inside-groups'
+					newlinesBetween: 'always-and-inside-groups'
 				}
 			]
 		})

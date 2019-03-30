@@ -16,7 +16,7 @@ rules: {
   'import-helpers/order-imports': [
       'warn',
       {
-          'newlines-between': 'always', // new line between groups
+          newlinesBetween: 'always', // new line between groups
           groups: [
               ['builtin', 'external', 'internal'],
               '/^@shared/',
@@ -67,7 +67,7 @@ To add a rule, update your `.eslintrc.(yml|json|js)`:
         'import-helpers/order-imports': [
             'warn',
             { // example configuration
-                'newlines-between': 'always',
+                newlinesBetween: 'always',
                 groups: [
                     ['builtin', 'external', 'internal'],
                     '/^@shared/',

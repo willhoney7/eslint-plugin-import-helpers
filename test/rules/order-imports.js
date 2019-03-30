@@ -169,7 +169,7 @@ ruleTester.run('order', rule, {
         var index = require('./');
       `
 		}),
-		// Option: newlines-between: 'always'
+		// Option: newlinesBetween: 'always'
 		test({
 			code: `
         var fs = require('fs');
@@ -188,11 +188,11 @@ ruleTester.run('order', rule, {
 			options: [
 				{
 					groups: [['builtin', 'index'], ['sibling'], ['parent', 'external']],
-					'newlines-between': 'always'
+					newlinesBetween: 'always'
 				}
 			]
 		}),
-		// Option: newlines-between: 'never'
+		// Option: newlinesBetween: 'never'
 		test({
 			code: `
         var fs = require('fs');
@@ -206,11 +206,11 @@ ruleTester.run('order', rule, {
 			options: [
 				{
 					groups: [['builtin', 'index'], ['sibling'], ['parent', 'external']],
-					'newlines-between': 'never'
+					newlinesBetween: 'never'
 				}
 			]
 		}),
-		// Option: newlines-between: 'ignore'
+		// Option: newlinesBetween: 'ignore'
 		test({
 			code: `
       var fs = require('fs');
@@ -228,11 +228,11 @@ ruleTester.run('order', rule, {
 			options: [
 				{
 					groups: [['builtin', 'index'], ['sibling'], ['parent', 'external']],
-					'newlines-between': 'ignore'
+					newlinesBetween: 'ignore'
 				}
 			]
 		}),
-		// 'ignore' should be the default value for `newlines-between`
+		// 'ignore' should be the default value for `newlinesBetween`
 		test({
 			code: `
       var fs = require('fs');
@@ -254,7 +254,7 @@ ruleTester.run('order', rule, {
 				}
 			]
 		}),
-		// Option newlines-between: 'always' with multiline imports #1
+		// Option newlinesBetween: 'always' with multiline imports #1
 		test({
 			code: `
         import path from 'path';
@@ -268,9 +268,9 @@ ruleTester.run('order', rule, {
         } from 'bar';
         import external from 'external'
       `,
-			options: [{ 'newlines-between': 'always' }]
+			options: [{ newlinesBetween: 'always' }]
 		}),
-		// Option newlines-between: 'always' with multiline imports #2
+		// Option newlinesBetween: 'always' with multiline imports #2
 		test({
 			code: `
         import path from 'path';
@@ -279,9 +279,9 @@ ruleTester.run('order', rule, {
 
         import external from 'external'
       `,
-			options: [{ 'newlines-between': 'always' }]
+			options: [{ newlinesBetween: 'always' }]
 		}),
-		// Option newlines-between: 'always' with multiline imports #3
+		// Option newlinesBetween: 'always' with multiline imports #3
 		test({
 			code: `
         import foo
@@ -290,9 +290,9 @@ ruleTester.run('order', rule, {
         import bar
           from './sibling';
       `,
-			options: [{ 'newlines-between': 'always' }]
+			options: [{ newlinesBetween: 'always' }]
 		}),
-		// Option newlines-between: 'always' with not assigned import #1
+		// Option newlinesBetween: 'always' with not assigned import #1
 		test({
 			code: `
         import path from 'path';
@@ -302,9 +302,9 @@ ruleTester.run('order', rule, {
 
         import _ from 'lodash';
       `,
-			options: [{ 'newlines-between': 'always' }]
+			options: [{ newlinesBetween: 'always' }]
 		}),
-		// Option newlines-between: 'never' with not assigned import #2
+		// Option newlinesBetween: 'never' with not assigned import #2
 		test({
 			code: `
         import path from 'path';
@@ -312,9 +312,9 @@ ruleTester.run('order', rule, {
         import 'something-else';
         import _ from 'lodash';
       `,
-			options: [{ 'newlines-between': 'never' }]
+			options: [{ newlinesBetween: 'never' }]
 		}),
-		// Option newlines-between: 'always' with not assigned require #1
+		// Option newlinesBetween: 'always' with not assigned require #1
 		test({
 			code: `
         var path = require('path');
@@ -324,9 +324,9 @@ ruleTester.run('order', rule, {
 
         var _ = require('lodash');
       `,
-			options: [{ 'newlines-between': 'always' }]
+			options: [{ newlinesBetween: 'always' }]
 		}),
-		// Option newlines-between: 'never' with not assigned require #2
+		// Option newlinesBetween: 'never' with not assigned require #2
 		test({
 			code: `
         var path = require('path');
@@ -334,9 +334,9 @@ ruleTester.run('order', rule, {
         require('something-else');
         var _ = require('lodash');
       `,
-			options: [{ 'newlines-between': 'never' }]
+			options: [{ newlinesBetween: 'never' }]
 		}),
-		// Option newlines-between: 'never' should ignore nested require statement's #1
+		// Option newlinesBetween: 'never' should ignore nested require statement's #1
 		test({
 			code: `
         var some = require('asdas');
@@ -351,9 +351,9 @@ ruleTester.run('order', rule, {
           }
         }
       `,
-			options: [{ 'newlines-between': 'never' }]
+			options: [{ newlinesBetween: 'never' }]
 		}),
-		// Option newlines-between: 'always' should ignore nested require statement's #2
+		// Option newlinesBetween: 'always' should ignore nested require statement's #2
 		test({
 			code: `
         var some = require('asdas');
@@ -367,9 +367,9 @@ ruleTester.run('order', rule, {
           }
         }
       `,
-			options: [{ 'newlines-between': 'always' }]
+			options: [{ newlinesBetween: 'always' }]
 		}),
-		// Option: newlines-between: 'always-and-inside-groups'
+		// Option: newlinesBetween: 'always-and-inside-groups'
 		test({
 			code: `
         var fs = require('fs');
@@ -391,7 +391,7 @@ ruleTester.run('order', rule, {
       `,
 			options: [
 				{
-					'newlines-between': 'always-and-inside-groups'
+					newlinesBetween: 'always-and-inside-groups'
 				}
 			]
 		}),
@@ -1003,7 +1003,7 @@ ruleTester.run('order', rule, {
 				}
 			]
 		}),
-		// Option newlines-between: 'never' - should report unnecessary line between groups
+		// Option newlinesBetween: 'never' - should report unnecessary line between groups
 		test({
 			code: `
         var fs = require('fs');
@@ -1028,7 +1028,7 @@ ruleTester.run('order', rule, {
 			options: [
 				{
 					groups: [['builtin', 'index'], ['sibling'], ['parent', 'external']],
-					'newlines-between': 'never'
+					newlinesBetween: 'never'
 				}
 			],
 			errors: [
@@ -1042,7 +1042,7 @@ ruleTester.run('order', rule, {
 				}
 			]
 		}),
-		// Fix newlines-between with comments after
+		// Fix newlinesBetween with comments after
 		test({
 			code: `
         var fs = require('fs'); /* comment */
@@ -1056,7 +1056,7 @@ ruleTester.run('order', rule, {
 			options: [
 				{
 					groups: [['builtin'], ['index']],
-					'newlines-between': 'never'
+					newlinesBetween: 'never'
 				}
 			],
 			errors: [
@@ -1066,7 +1066,7 @@ ruleTester.run('order', rule, {
 				}
 			]
 		}),
-		// Cannot fix newlines-between with multiline comment after
+		// Cannot fix newlinesBetween with multiline comment after
 		test({
 			code: `
         var fs = require('fs'); /* multiline
@@ -1083,7 +1083,7 @@ ruleTester.run('order', rule, {
 			options: [
 				{
 					groups: [['builtin'], ['index']],
-					'newlines-between': 'never'
+					newlinesBetween: 'never'
 				}
 			],
 			errors: [
@@ -1093,7 +1093,7 @@ ruleTester.run('order', rule, {
 				}
 			]
 		}),
-		// Option newlines-between: 'always' - should report lack of newline between groups
+		// Option newlinesBetween: 'always' - should report lack of newline between groups
 		test({
 			code: `
         var fs = require('fs');
@@ -1118,7 +1118,7 @@ ruleTester.run('order', rule, {
 			options: [
 				{
 					groups: [['builtin', 'index'], ['sibling'], ['parent', 'external']],
-					'newlines-between': 'always'
+					newlinesBetween: 'always'
 				}
 			],
 			errors: [
@@ -1132,7 +1132,7 @@ ruleTester.run('order', rule, {
 				}
 			]
 		}),
-		// Option newlines-between: 'always' should report unnecessary empty lines space between import groups
+		// Option newlinesBetween: 'always' should report unnecessary empty lines space between import groups
 		test({
 			code: `
         var fs = require('fs');
@@ -1155,7 +1155,7 @@ ruleTester.run('order', rule, {
 			options: [
 				{
 					groups: [['builtin', 'index'], ['sibling', 'parent', 'external']],
-					'newlines-between': 'always'
+					newlinesBetween: 'always'
 				}
 			],
 			errors: [
@@ -1169,7 +1169,7 @@ ruleTester.run('order', rule, {
 				}
 			]
 		}),
-		// Option newlines-between: 'never' cannot fix if there are other statements between imports
+		// Option newlinesBetween: 'never' cannot fix if there are other statements between imports
 		test({
 			code: `
         import path from 'path';
@@ -1185,7 +1185,7 @@ ruleTester.run('order', rule, {
         import 'something-else';
         import _ from 'lodash';
       `,
-			options: [{ 'newlines-between': 'never' }],
+			options: [{ newlinesBetween: 'never' }],
 			errors: [
 				{
 					line: 2,
@@ -1193,7 +1193,7 @@ ruleTester.run('order', rule, {
 				}
 			]
 		}),
-		// Option newlines-between: 'always' should report missing empty lines when using not assigned imports
+		// Option newlinesBetween: 'always' should report missing empty lines when using not assigned imports
 		test({
 			code: `
         import path from 'path';
@@ -1208,7 +1208,7 @@ ruleTester.run('order', rule, {
         import 'something-else';
         import _ from 'lodash';
       `,
-			options: [{ 'newlines-between': 'always' }],
+			options: [{ newlinesBetween: 'always' }],
 			errors: [
 				{
 					line: 2,
@@ -1227,7 +1227,7 @@ ruleTester.run('order', rule, {
 
         import _ from 'lodash';
       `,
-			options: [{ 'newlines-between': 'always' }],
+			options: [{ newlinesBetween: 'always' }],
 			errors: [
 				{
 					line: 2,
@@ -1246,7 +1246,7 @@ ruleTester.run('order', rule, {
 
         import _ from 'lodash';
       `,
-			options: [{ 'newlines-between': 'always' }],
+			options: [{ newlinesBetween: 'always' }],
 			errors: [
 				{
 					line: 2,
@@ -1267,7 +1267,7 @@ ruleTester.run('order', rule, {
         2 */
         import _ from 'lodash';
       `,
-			options: [{ 'newlines-between': 'always' }],
+			options: [{ newlinesBetween: 'always' }],
 			errors: [
 				{
 					line: 2,
