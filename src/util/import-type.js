@@ -1,12 +1,7 @@
-const cond = require('lodash/cond');
 const coreModules = require('builtin-modules/static');
 const { join } = require('path');
 
 const resolve = require('eslint-module-utils/resolve').default;
-
-function constant(value) {
-	return () => value;
-}
 
 function baseModule(name) {
 	if (isScoped(name)) {
@@ -69,29 +64,24 @@ function isRelativeToSibling(name) {
 	return /^\.[\\/]/.test(name);
 }
 
-const typeTest = cond([
-	[isAbsolute, constant('absolute')],
-	[isBuiltIn, constant('builtin')],
-	[isExternalModule, constant('external')],
-	[isScoped, constant('external')],
-	[isInternalModule, constant('internal')],
-	[isRelativeToParent, constant('parent')],
-	[isIndex, constant('index')],
-	[isRelativeToSibling, constant('sibling')],
-	[constant(true), constant('unknown')]
-]);
-
 function isRegularExpressionGroup(group) {
 	return group && group[0] === '/' && group[group.length - 1] === '/' && group.length > 1;
 }
 
 function resolveImportType(name, context, regExpGroups) {
-	let matchingRegExpGroup = regExpGroups.find(([_groupName, regExp]) => regExp.test(name));
-	if (matchingRegExpGroup) {
-		return matchingRegExpGroup[0];
-	}
+	const matchingRegExpGroup = regExpGroups.find(([_groupName, regExp]) => regExp.test(name));
+	if (matchingRegExpGroup) return matchingRegExpGroup[0];
 
-	return typeTest(name, context.settings, resolve(name, context));
+	if (isAbsolute(name)) return 'absolute';
+	if (isBuiltIn(name, context.settings)) return 'builtin';
+	if (isExternalModule(name, context.settings, resolve(name, context))) return 'external';
+	if (isScoped(name)) return 'external';
+	if (isInternalModule(name, context.settings, resolve(name, context))) return 'internal';
+	if (isRelativeToParent(name)) return 'parent';
+	if (isIndex(name)) return 'index';
+	if (isRelativeToSibling(name)) return 'sibling';
+
+	return 'unknown';
 }
 
 module.exports = {
