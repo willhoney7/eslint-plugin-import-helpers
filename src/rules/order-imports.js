@@ -476,7 +476,8 @@ module.exports = {
 	meta: {
 		type: 'suggestion',
 		docs: {
-			url: '' // docsUrl('order'), TODO
+			url:
+				'https://github.com/Tibfib/eslint-plugin-import-helpers/blob/master/docs/rules/order-imports.md'
 		},
 
 		fixable: 'code',
