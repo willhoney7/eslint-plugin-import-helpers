@@ -2,7 +2,6 @@
 
 const { resolveImportType, isRegularExpressionGroup } = require('../util/import-type');
 const isStaticRequire = require('../util/static-require');
-// import docsUrl from '../docsUrl'
 
 const defaultGroups = ['builtin', 'external', 'parent', 'sibling', 'index'];
 
@@ -327,7 +326,7 @@ const types = ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'];
 
 // Creates an object with type-rank pairs.
 // Example: { index: 0, sibling: 1, parent: 1, external: 1, builtin: 2, internal: 2 }
-// Will throw an error if it contains a type that does not exist, or has a duplicate
+// Will throw an error if it: contains a type that does not exist in the list, does not start and end with '/', or has a duplicate
 function convertGroupsToRanks(groups) {
 	const rankObject = groups.reduce(function(res, group, index) {
 		if (typeof group === 'string') {
@@ -403,7 +402,7 @@ function makeNewlinesBetweenReport(context, imported, newlinesBetweenImports) {
 	imported.slice(1).forEach(function(currentImport) {
 		const emptyLinesBetween = getNumberOfEmptyLinesBetween(currentImport, previousImport);
 
-		const currentGroupRank = Math.floor(currentImport.rank); // each group rank is a whole number, within a group, decimals indicate subranking. yeah.
+		const currentGroupRank = Math.floor(currentImport.rank); // each group rank is a whole number, within a group, decimals indicate subranking. yeah, not great.
 		const previousGroupRank = Math.floor(previousImport.rank);
 
 		if (
