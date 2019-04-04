@@ -1,5 +1,5 @@
 import { resolveImportType, isRegularExpressionGroup } from '../util/import-type';
-const isStaticRequire = require('../util/static-require');
+import { isStaticRequire } from '../util/static-require';
 
 const defaultGroups = ['module', 'parent', 'sibling', 'index'];
 
