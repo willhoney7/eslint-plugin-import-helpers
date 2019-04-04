@@ -1,4 +1,4 @@
-import { resolveImportType, isRegularExpressionGroup } from '../util/import-type';
+import { determineImportType, isRegularExpressionGroup } from '../util/import-type';
 import { isStaticRequire } from '../util/static-require';
 
 const defaultGroups = ['module', 'parent', 'sibling', 'index'];
@@ -306,7 +306,7 @@ function getRegExpGroups(ranks) {
 // DETECTING
 
 function computeRank(ranks, regExpGroups, name, type) {
-	return ranks[resolveImportType(name, regExpGroups)] + (type === 'import' ? 0 : 100);
+	return ranks[determineImportType(name, regExpGroups)] + (type === 'import' ? 0 : 100);
 }
 
 function registerNode(node, name, type, ranks, regExpGroups, imported) {

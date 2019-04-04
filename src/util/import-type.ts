@@ -27,7 +27,10 @@ export function isRegularExpressionGroup(group: string): boolean {
 export type KnownImportTypes = 'absolute' | 'module' | 'parent' | 'index' | 'sibling';
 export type AllImportTypes = KnownImportTypes | 'unknown' | string;
 
-export function resolveImportType(name: string, regExpGroups: [string, RegExp][]): AllImportTypes {
+export function determineImportType(
+	name: string,
+	regExpGroups: [string, RegExp][]
+): AllImportTypes {
 	const matchingRegExpGroup = regExpGroups.find(([_groupName, regExp]) => regExp.test(name));
 	if (matchingRegExpGroup) return matchingRegExpGroup[0];
 
