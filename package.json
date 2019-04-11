@@ -4,9 +4,10 @@
 	"description": "ESLint Rules to Aid with Imports",
 	"main": "lib/index.js",
 	"scripts": {
-		"prepublish": "gulp prepublish",
-		"test": "ts-node ./test/run-all",
-		"test-new": "ts-node ./test/rules/order-imports-2"
+		"build": "gulp src",
+		"prepublish": "npm run build",
+		"test": "npm run build && npm run test-quick",
+		"test-quick": "NODE_PATH=./lib nyc -s mocha -R dot --recursive test -t test-results"
 	},
 	"keywords": [
 		"eslint",
@@ -28,13 +29,10 @@
 		"eslint": "^5.15.3",
 		"gulp": "^3.9.0",
 		"gulp-typescript": "^5.0.1",
+		"mocha": "^6.1.2",
+		"nyc": "^13.3.0",
 		"rimraf": "2.5.2",
-		"ts-node": "^8.0.3",
 		"typescript": "^3.4.1"
 	},
-	"dependencies": {
-		"builtin-modules": "^1.1.1",
-		"eslint-import-resolver-node": "^0.3.2",
-		"eslint-module-utils": "^2.3.0"
-	}
+	"dependencies": {}
 }

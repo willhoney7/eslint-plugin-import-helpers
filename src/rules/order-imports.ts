@@ -32,7 +32,7 @@ type Imported = { name: string; rank: number; node: NodeOrToken };
 
 // REPORTING AND FIXING
 
-function reverse(array) {
+function reverse(array: Imported[]) {
 	return array
 		.map(function(v) {
 			return {
@@ -245,7 +245,7 @@ function fixOutOfOrder(context, firstNode: NodeOrToken, secondNode: NodeOrToken,
 	}
 }
 
-function reportOutOfOrder(context, imported, outOfOrder, order: 'before' | 'after'): void {
+function reportOutOfOrder(context, imported: Imported[], outOfOrder, order: 'before' | 'after'): void {
 	outOfOrder.forEach(function(imp) {
 		const found = imported.find(function hasHigherRank(importedItem) {
 			return importedItem.rank > imp.rank;
@@ -254,7 +254,7 @@ function reportOutOfOrder(context, imported, outOfOrder, order: 'before' | 'afte
 	});
 }
 
-function makeOutOfOrderReport(context, imported) {
+function makeOutOfOrderReport(context, imported: Imported[]) {
 	const outOfOrder = findOutOfOrder(imported);
 	if (!outOfOrder.length) {
 		return;
@@ -390,12 +390,12 @@ function makeNewlinesBetweenReport(
 	imported: Imported[],
 	newlinesBetweenImports: NewLinesBetweenOption
 ): void {
-	const getNumberOfEmptyLinesBetween = (currentImport, previousImport): number => {
+	const getNumberOfEmptyLinesBetween = (currentImport: Imported, previousImport: Imported): number => {
 		const linesBetweenImports = context
 			.getSourceCode()
 			.lines.slice(previousImport.node.loc.end.line, currentImport.node.loc.start.line - 1);
 
-		return linesBetweenImports.filter((line) => !line.trim().length).length;
+		return linesBetweenImports.filter((line: any) => !line.trim().length).length;
 	};
 	let previousImport = imported[0];
 
@@ -410,6 +410,16 @@ function makeNewlinesBetweenReport(
 				context.report({
 					node: previousImport.node,
 					message: 'There should be at least one empty line between import groups',
+					fix: fixNewLineAfterImport(context, previousImport)
+				});
+			} else if (
+				currentGroupRank === previousGroupRank &&
+				emptyLinesBetween === 0 &&
+				newlinesBetweenImports === 'always-and-inside-groups'
+			) {
+				context.report({
+					node: previousImport.node,
+					message: 'There should be at least one empty line between imports',
 					fix: fixNewLineAfterImport(context, previousImport)
 				});
 			} else if (

@@ -3,7 +3,7 @@ const RuleTester = require('eslint/lib/testers/rule-tester');
 const { test } = require('../utils');
 
 const ruleTester = new RuleTester();
-const rule = require('../../src/rules/order-imports');
+const rule = require('rules/order-imports');
 
 ruleTester.run('order', rule, {
 	valid: [
