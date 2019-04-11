@@ -3,22 +3,19 @@
 Enforce a convention in the order of `require()` / `import` statements. The order is as shown in the following example:
 
 ```js
-// 1. node "builtins"
+// 1. "modules"
 import fs from 'fs';
 import path from 'path';
-// 2. "external" modules
 import _ from 'lodash';
 import chalk from 'chalk';
-// 3. "internal" modules
-// (non-relative modules that aren't found in your `node_modules` folder (or specified external-modules folder)
 import foo from 'src/foo';
-// 4. modules from a "parent" directory
+// 2. modules from a "parent" directory
 import foo from '../foo';
 import qux from '../../foo/qux';
-// 5. "sibling" modules from the same or a sibling's directory
+// 3. "sibling" modules from the same or a sibling's directory
 import bar from './bar';
 import baz from './bar/baz';
-// 6. "index" of the current directory
+// 4. "index" of the current directory
 import main from './';
 ```
 
@@ -75,7 +72,7 @@ This rule supports the following options:
 
 How groups are defined, and the order to respect. `groups` must be an array of `string` or [`string`]. The `string` must either be one of:
 
--   `"builtin"`, `"external"`, `"internal"`, `"parent"`, `"sibling"`, `"index"`
+-   `"module"`, `"internal"`, `"parent"`, `"sibling"`, `"index"`
 -   or a regular expression like string: `/^shared/` (wrapped in `/`).
     -   in this example, it would match any import paths starting with `'shared'`
 
@@ -83,7 +80,7 @@ The enforced order is the same as the order of each element in a group. Omitted 
 
 ```js
 [
-	'builtin', // Built-in types are first
+	'module', // Built-in types are first
 	['sibling', 'parent'], // Then sibling and parent types. They can be mingled together
 	'/^shared/', // any import paths starting with 'shared'
 	'index' // Then the index file
@@ -91,14 +88,14 @@ The enforced order is the same as the order of each element in a group. Omitted 
 ];
 ```
 
-The default value is `["builtin", "external", "parent", "sibling", "index"]`.
+The default value is `["module", "parent", "sibling", "index"]`.
 
 You can set the options like this:
 
 ```js
 "import/order": [
     "error",
-    {"groups": ["index", "sibling", "parent", "/core/", "internal", "external", "builtin"]}
+    {"groups": ["index", "sibling", "parent", "/core/", "internal", "module"]}
 ]
 ```
 
@@ -182,9 +179,3 @@ import Baz from 'Baz';
 import bar from 'bar';
 import foo from 'foo';
 ```
-
-## Related
-
--   [`import/external-module-folders`] setting
-
-[`import/external-module-folders`]: ../../README.md#importexternal-module-folders
