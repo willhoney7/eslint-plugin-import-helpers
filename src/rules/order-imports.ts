@@ -1,7 +1,34 @@
-import { determineImportType, isRegularExpressionGroup } from '../util/import-type';
+import {
+	determineImportType,
+	isRegularExpressionGroup,
+	ValidImportType,
+	KnownImportType,
+	RegExpGroups
+} from '../util/import-type';
 import { isStaticRequire } from '../util/static-require';
 
-const defaultGroups = ['module', 'parent', 'sibling', 'index'];
+type NewLinesBetweenOption = 'ignore' | 'always' | 'always-and-inside-groups' | 'never';
+const newLinesBetweenOptions: NewLinesBetweenOption[] = ['ignore', 'always', 'always-and-inside-groups', 'never'];
+
+type AlphabetizeOption = 'ignore' | 'asc' | 'desc';
+type AlphabetizeConfig = { order: AlphabetizeOption; ignoreCase: boolean };
+const alphabetizeOptions: AlphabetizeOption[] = ['ignore', 'asc', 'desc'];
+
+type Groups = (ValidImportType | ValidImportType[])[];
+const defaultGroups: Groups = ['module', 'parent', 'sibling', 'index'];
+
+type RuleOptions = {
+	groups?: Groups;
+	newlinesBetween?: NewLinesBetweenOption;
+	alphabetize?: Partial<AlphabetizeConfig>;
+};
+
+type ImportType = 'require' | 'import';
+
+type NodeOrToken = any; // todo;
+
+type Ranks = { [group: string]: number };
+type Imported = { name: string; rank: number; node: NodeOrToken };
 
 // REPORTING AND FIXING
 
@@ -17,9 +44,9 @@ function reverse(array) {
 		.reverse();
 }
 
-function getTokensOrCommentsAfter(sourceCode, node, count) {
+function getTokensOrCommentsAfter(sourceCode, node, count): NodeOrToken[] {
 	let currentNodeOrToken = node;
-	const result = [];
+	const result: NodeOrToken = [];
 	for (let i = 0; i < count; i++) {
 		currentNodeOrToken = sourceCode.getTokenOrCommentAfter(currentNodeOrToken);
 		if (currentNodeOrToken == null) {
@@ -30,9 +57,9 @@ function getTokensOrCommentsAfter(sourceCode, node, count) {
 	return result;
 }
 
-function getTokensOrCommentsBefore(sourceCode, node, count) {
+function getTokensOrCommentsBefore(sourceCode, node, count): NodeOrToken[] {
 	let currentNodeOrToken = node;
-	const result = [];
+	const result: NodeOrToken = [];
 	for (let i = 0; i < count; i++) {
 		currentNodeOrToken = sourceCode.getTokenOrCommentBefore(currentNodeOrToken);
 		if (currentNodeOrToken == null) {
@@ -43,9 +70,9 @@ function getTokensOrCommentsBefore(sourceCode, node, count) {
 	return result.reverse();
 }
 
-function takeTokensAfterWhile(sourceCode, node, condition) {
-	const tokens = getTokensOrCommentsAfter(sourceCode, node, 100);
-	const result = [];
+function takeTokensAfterWhile(sourceCode, node, condition): NodeOrToken[] {
+	const tokens: NodeOrToken[] = getTokensOrCommentsAfter(sourceCode, node, 100);
+	const result: NodeOrToken = [];
 	for (let i = 0; i < tokens.length; i++) {
 		if (condition(tokens[i])) {
 			result.push(tokens[i]);
@@ -56,9 +83,9 @@ function takeTokensAfterWhile(sourceCode, node, condition) {
 	return result;
 }
 
-function takeTokensBeforeWhile(sourceCode, node, condition) {
-	const tokens = getTokensOrCommentsBefore(sourceCode, node, 100);
-	const result = [];
+function takeTokensBeforeWhile(sourceCode, node, condition): NodeOrToken[] {
+	const tokens: NodeOrToken[] = getTokensOrCommentsBefore(sourceCode, node, 100);
+	const result: NodeOrToken[] = [];
 	for (let i = tokens.length - 1; i >= 0; i--) {
 		if (condition(tokens[i])) {
 			result.push(tokens[i]);
@@ -94,20 +121,14 @@ function findRootNode(node) {
 function findEndOfLineWithComments(sourceCode, node) {
 	const tokensToEndOfLine = takeTokensAfterWhile(sourceCode, node, commentOnSameLineAs(node));
 	let endOfTokens =
-		tokensToEndOfLine.length > 0
-			? tokensToEndOfLine[tokensToEndOfLine.length - 1].range[1]
-			: node.range[1];
+		tokensToEndOfLine.length > 0 ? tokensToEndOfLine[tokensToEndOfLine.length - 1].range[1] : node.range[1];
 	let result = endOfTokens;
 	for (let i = endOfTokens; i < sourceCode.text.length; i++) {
 		if (sourceCode.text[i] === '\n') {
 			result = i + 1;
 			break;
 		}
-		if (
-			sourceCode.text[i] !== ' ' &&
-			sourceCode.text[i] !== '\t' &&
-			sourceCode.text[i] !== '\r'
-		) {
+		if (sourceCode.text[i] !== ' ' && sourceCode.text[i] !== '\t' && sourceCode.text[i] !== '\r') {
 			break;
 		}
 		result = i + 1;
@@ -115,7 +136,7 @@ function findEndOfLineWithComments(sourceCode, node) {
 	return result;
 }
 
-function commentOnSameLineAs(node) {
+function commentOnSameLineAs(node): (token: NodeOrToken) => boolean {
 	return (token) =>
 		(token.type === 'Block' || token.type === 'Line') &&
 		token.loc.start.line === token.loc.end.line &&
@@ -124,8 +145,7 @@ function commentOnSameLineAs(node) {
 
 function findStartOfLineWithComments(sourceCode, node) {
 	const tokensToEndOfLine = takeTokensBeforeWhile(sourceCode, node, commentOnSameLineAs(node));
-	let startOfTokens =
-		tokensToEndOfLine.length > 0 ? tokensToEndOfLine[0].range[0] : node.range[0];
+	let startOfTokens = tokensToEndOfLine.length > 0 ? tokensToEndOfLine[0].range[0] : node.range[0];
 	let result = startOfTokens;
 	for (let i = startOfTokens - 1; i > 0; i--) {
 		if (sourceCode.text[i] !== ' ' && sourceCode.text[i] !== '\t') {
@@ -136,7 +156,7 @@ function findStartOfLineWithComments(sourceCode, node) {
 	return result;
 }
 
-function isPlainRequireModule(node) {
+function isPlainRequireModule(node): boolean {
 	if (node.type !== 'VariableDeclaration') {
 		return false;
 	}
@@ -144,7 +164,8 @@ function isPlainRequireModule(node) {
 		return false;
 	}
 	const decl = node.declarations[0];
-	const result =
+
+	return (
 		decl.id != null &&
 		decl.id.type === 'Identifier' &&
 		decl.init != null &&
@@ -153,21 +174,19 @@ function isPlainRequireModule(node) {
 		decl.init.callee.name === 'require' &&
 		decl.init.arguments != null &&
 		decl.init.arguments.length === 1 &&
-		decl.init.arguments[0].type === 'Literal';
-	return result;
-}
-
-function isPlainImportModule(node) {
-	return (
-		node.type === 'ImportDeclaration' && node.specifiers != null && node.specifiers.length > 0
+		decl.init.arguments[0].type === 'Literal'
 	);
 }
 
-function canCrossNodeWhileReorder(node) {
+function isPlainImportModule(node: NodeOrToken): boolean {
+	return node.type === 'ImportDeclaration' && node.specifiers != null && node.specifiers.length > 0;
+}
+
+function canCrossNodeWhileReorder(node: NodeOrToken): boolean {
 	return isPlainRequireModule(node) || isPlainImportModule(node);
 }
 
-function canReorderItems(firstNode, secondNode) {
+function canReorderItems(firstNode: NodeOrToken, secondNode: NodeOrToken): boolean {
 	const parent = firstNode.parent;
 	const firstIndex = parent.body.indexOf(firstNode);
 	const secondIndex = parent.body.indexOf(secondNode);
@@ -180,7 +199,7 @@ function canReorderItems(firstNode, secondNode) {
 	return true;
 }
 
-function fixOutOfOrder(context, firstNode, secondNode, order) {
+function fixOutOfOrder(context, firstNode: NodeOrToken, secondNode: NodeOrToken, order: 'before' | 'after'): void {
 	const sourceCode = context.getSourceCode();
 
 	const firstRoot = findRootNode(firstNode.node);
@@ -197,14 +216,7 @@ function fixOutOfOrder(context, firstNode, secondNode, order) {
 		newCode = newCode + '\n';
 	}
 
-	const message =
-		'`' +
-		secondNode.name +
-		'` import should occur ' +
-		order +
-		' import of `' +
-		firstNode.name +
-		'`';
+	const message = '`' + secondNode.name + '` import should occur ' + order + ' import of `' + firstNode.name + '`';
 
 	if (order === 'before') {
 		context.report({
@@ -233,7 +245,7 @@ function fixOutOfOrder(context, firstNode, secondNode, order) {
 	}
 }
 
-function reportOutOfOrder(context, imported, outOfOrder, order) {
+function reportOutOfOrder(context, imported, outOfOrder, order: 'before' | 'after'): void {
 	outOfOrder.forEach(function(imp) {
 		const found = imported.find(function hasHigherRank(importedItem) {
 			return importedItem.rank > imp.rank;
@@ -269,13 +281,7 @@ function mutateRanksToAlphabetize(imported, order, ignoreCase) {
 	// sort imports locally within their group
 	groupRanks.forEach(function(groupRank) {
 		groupedByRanks[groupRank].sort(function(importA, importB) {
-			return ignoreCase
-				? importA.localeCompare(importB)
-				: importA < importB
-				? -1
-				: importA === importB
-				? 0
-				: 1;
+			return ignoreCase ? importA.localeCompare(importB) : importA < importB ? -1 : importA === importB ? 0 : 1;
 		});
 
 		if (order === 'desc') {
@@ -297,39 +303,39 @@ function mutateRanksToAlphabetize(imported, order, ignoreCase) {
 	});
 }
 
-function getRegExpGroups(ranks) {
+function getRegExpGroups(ranks: Ranks): RegExpGroups {
 	return Object.keys(ranks)
 		.filter(isRegularExpressionGroup)
-		.map((rank) => [rank, new RegExp(rank.slice(1, rank.length - 1))]);
+		.map((rank): [string, RegExp] => [rank, new RegExp(rank.slice(1, rank.length - 1))]);
 }
 
 // DETECTING
 
-function computeRank(ranks, regExpGroups, name, type) {
+function computeRank(ranks: Ranks, regExpGroups, name: string, type: ImportType): number {
 	return ranks[determineImportType(name, regExpGroups)] + (type === 'import' ? 0 : 100);
 }
 
-function registerNode(node, name, type, ranks, regExpGroups, imported) {
+function registerNode(node: NodeOrToken, name: string, type: ImportType, ranks, regExpGroups, imported: Imported[]) {
 	const rank = computeRank(ranks, regExpGroups, name, type);
 	if (rank !== -1) {
 		imported.push({ name, rank, node });
 	}
 }
 
-function isInVariableDeclarator(node) {
+function isInVariableDeclarator(node: NodeOrToken): boolean {
 	return node && (node.type === 'VariableDeclarator' || isInVariableDeclarator(node.parent));
 }
 
-const knownTypes = ['absolute', 'module', 'parent', 'sibling', 'index'];
+const knownTypes: KnownImportType[] = ['absolute', 'module', 'parent', 'sibling', 'index'];
 
 // Creates an object with type-rank pairs.
 // Example: { index: 0, sibling: 1, parent: 1, module: 2 }
 // Will throw an error if it: contains a type that does not exist in the list, does not start and end with '/', or has a duplicate
-function convertGroupsToRanks(groups) {
+function convertGroupsToRanks(groups: Groups): Ranks {
 	const rankObject = groups.reduce(function(res, group, index) {
 		if (typeof group === 'string') group = [group]; // wrap them all in arrays
-		group.forEach(function(groupItem) {
-			if (!isRegularExpressionGroup(groupItem) && knownTypes.indexOf(groupItem) === -1) {
+		group.forEach(function(groupItem: ValidImportType) {
+			if (!isRegularExpressionGroup(groupItem) && knownTypes.indexOf(groupItem as KnownImportType) === -1) {
 				throw new Error(
 					`Incorrect configuration of the rule: Unknown type ${JSON.stringify(
 						groupItem
@@ -337,9 +343,7 @@ function convertGroupsToRanks(groups) {
 				);
 			}
 			if (res[groupItem] !== undefined) {
-				throw new Error(
-					'Incorrect configuration of the rule: `' + groupItem + '` is duplicated'
-				);
+				throw new Error('Incorrect configuration of the rule: `' + groupItem + '` is duplicated');
 			}
 			res[groupItem] = index;
 		});
@@ -358,11 +362,7 @@ function convertGroupsToRanks(groups) {
 
 function fixNewLineAfterImport(context, previousImport) {
 	const prevRoot = findRootNode(previousImport.node);
-	const tokensToEndOfLine = takeTokensAfterWhile(
-		context.getSourceCode(),
-		prevRoot,
-		commentOnSameLineAs(prevRoot)
-	);
+	const tokensToEndOfLine = takeTokensAfterWhile(context.getSourceCode(), prevRoot, commentOnSameLineAs(prevRoot));
 
 	let endOfLine = prevRoot.range[1];
 	if (tokensToEndOfLine.length > 0) {
@@ -385,8 +385,12 @@ function removeNewLineAfterImport(context, currentImport, previousImport) {
 	return undefined;
 }
 
-function makeNewlinesBetweenReport(context, imported, newlinesBetweenImports) {
-	const getNumberOfEmptyLinesBetween = (currentImport, previousImport) => {
+function makeNewlinesBetweenReport(
+	context: any,
+	imported: Imported[],
+	newlinesBetweenImports: NewLinesBetweenOption
+): void {
+	const getNumberOfEmptyLinesBetween = (currentImport, previousImport): number => {
 		const linesBetweenImports = context
 			.getSourceCode()
 			.lines.slice(previousImport.node.loc.end.line, currentImport.node.loc.start.line - 1);
@@ -396,20 +400,17 @@ function makeNewlinesBetweenReport(context, imported, newlinesBetweenImports) {
 	let previousImport = imported[0];
 
 	imported.slice(1).forEach(function(currentImport) {
-		const emptyLinesBetween = getNumberOfEmptyLinesBetween(currentImport, previousImport);
+		const emptyLinesBetween: number = getNumberOfEmptyLinesBetween(currentImport, previousImport);
 
 		const currentGroupRank = Math.floor(currentImport.rank); // each group rank is a whole number, within a group, decimals indicate subranking. yeah, not great.
 		const previousGroupRank = Math.floor(previousImport.rank);
 
-		if (
-			newlinesBetweenImports === 'always' ||
-			newlinesBetweenImports === 'always-and-inside-groups'
-		) {
+		if (newlinesBetweenImports === 'always' || newlinesBetweenImports === 'always-and-inside-groups') {
 			if (currentGroupRank !== previousGroupRank && emptyLinesBetween === 0) {
 				context.report({
 					node: previousImport.node,
 					message: 'There should be at least one empty line between import groups',
-					fix: fixNewLineAfterImport(context, previousImport, currentImport)
+					fix: fixNewLineAfterImport(context, previousImport)
 				});
 			} else if (
 				currentGroupRank === previousGroupRank &&
@@ -434,7 +435,7 @@ function makeNewlinesBetweenReport(context, imported, newlinesBetweenImports) {
 	});
 }
 
-function getAlphabetizeConfig(options) {
+function getAlphabetizeConfig(options: RuleOptions): AlphabetizeConfig {
 	const alphabetize = options.alphabetize || {};
 	const order = alphabetize.order || 'ignore';
 	const ignoreCase = alphabetize.ignoreCase || false;
@@ -471,8 +472,7 @@ module.exports = {
 	meta: {
 		type: 'suggestion',
 		docs: {
-			url:
-				'https://github.com/Tibfib/eslint-plugin-import-helpers/blob/master/docs/rules/order-imports.md'
+			url: 'https://github.com/Tibfib/eslint-plugin-import-helpers/blob/master/docs/rules/order-imports.md'
 		},
 
 		fixable: 'code',
@@ -484,13 +484,13 @@ module.exports = {
 						type: 'array'
 					},
 					newlinesBetween: {
-						enum: ['ignore', 'always', 'always-and-inside-groups', 'never']
+						enum: newLinesBetweenOptions
 					},
 					alphabetize: {
 						type: 'object',
 						properties: {
 							order: {
-								enum: ['ignore', 'asc', 'desc'],
+								enum: alphabetizeOptions,
 								default: 'ignore'
 							},
 							ignoreCase: {
@@ -506,11 +506,12 @@ module.exports = {
 	},
 
 	create: function importOrderRule(context) {
-		const options = context.options[0] || {};
-		const newlinesBetweenImports = options.newlinesBetween || 'ignore';
-		let alphabetize;
-		let ranks;
-		let regExpGroups;
+		const options: RuleOptions = context.options[0] || {};
+		const newlinesBetweenImports: NewLinesBetweenOption = options.newlinesBetween || 'ignore';
+
+		let alphabetize: AlphabetizeConfig;
+		let ranks: Ranks;
+		let regExpGroups: RegExpGroups;
 
 		try {
 			alphabetize = getAlphabetizeConfig(options);
@@ -524,21 +525,17 @@ module.exports = {
 				}
 			};
 		}
-		let imported = [];
-		let level = 0;
+		let imported: Imported[] = [];
 
-		function incrementLevel() {
-			level++;
-		}
-		function decrementLevel() {
-			level--;
-		}
+		let level = 0;
+		const incrementLevel = () => level++;
+		const decrementLevel = () => level--;
 
 		return {
 			ImportDeclaration: function handleImports(node) {
 				if (node.specifiers.length) {
 					// Ignoring unassigned imports
-					const name = node.source.value;
+					const name: string = node.source.value;
 					registerNode(node, name, 'import', ranks, regExpGroups, imported);
 				}
 			},
@@ -546,7 +543,7 @@ module.exports = {
 				if (level !== 0 || !isStaticRequire(node) || !isInVariableDeclarator(node.parent)) {
 					return;
 				}
-				const name = node.arguments[0].value;
+				const name: string = node.arguments[0].value;
 				registerNode(node, name, 'require', ranks, regExpGroups, imported);
 			},
 			'Program:exit': function reportAndReset() {

@@ -24,13 +24,12 @@ export function isRegularExpressionGroup(group: string): boolean {
 	return !!group && group[0] === '/' && group[group.length - 1] === '/' && group.length > 1;
 }
 
-export type KnownImportTypes = 'absolute' | 'module' | 'parent' | 'index' | 'sibling';
-export type AllImportTypes = KnownImportTypes | 'unknown' | string;
+export type KnownImportType = 'absolute' | 'module' | 'parent' | 'index' | 'sibling';
+export type ValidImportType = KnownImportType | string; // this string should be a string surrounded with '/'
+export type EveryImportType = ValidImportType | 'unknown';
+export type RegExpGroups = [string, RegExp][]; // array of tuples of [string, RegExp]
 
-export function determineImportType(
-	name: string,
-	regExpGroups: [string, RegExp][]
-): AllImportTypes {
+export function determineImportType(name: string, regExpGroups: RegExpGroups): EveryImportType {
 	const matchingRegExpGroup = regExpGroups.find(([_groupName, regExp]) => regExp.test(name));
 	if (matchingRegExpGroup) return matchingRegExpGroup[0];
 
