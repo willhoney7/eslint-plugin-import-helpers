@@ -96,7 +96,7 @@ The default value is `["builtin", "external", "parent", "sibling", "index"]`.
 You can set the options like this:
 
 ```js
-"import/order": [
+"import-helpers/order-imports": [
     "error",
     {"groups": ["index", "sibling", "parent", "/core/", "internal", "external", "builtin"]}
 ]
@@ -113,7 +113,7 @@ Enforces or forbids new lines between import groups:
 With the default group setting, the following will be invalid:
 
 ```js
-/* eslint import/order: ["error", {"newlines-between": "always"}] */
+/* eslint import-helpers/order-imports: ["error", {"newlines-between": "always"}] */
 import fs from 'fs';
 import path from 'path';
 import index from './';
@@ -121,7 +121,7 @@ import sibling from './foo';
 ```
 
 ```js
-/* eslint import/order: ["error", {"newlines-between": "never"}] */
+/* eslint import-helpers/order-imports: ["error", {"newlines-between": "never"}] */
 import fs from 'fs';
 import path from 'path';
 
@@ -133,7 +133,7 @@ import sibling from './foo';
 while those will be valid:
 
 ```js
-/* eslint import/order: ["error", {"newlines-between": "always"}] */
+/* eslint import-helpers/order-imports: ["error", {"newlines-between": "always"}] */
 import fs from 'fs';
 import path from 'path';
 
@@ -143,7 +143,7 @@ import sibling from './foo';
 ```
 
 ```js
-/* eslint import/order: ["error", {"newlines-between": "never"}] */
+/* eslint import-helpers/order-imports: ["error", {"newlines-between": "never"}] */
 import fs from 'fs';
 import path from 'path';
 import index from './';
