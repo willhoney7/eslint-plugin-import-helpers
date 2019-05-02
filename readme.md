@@ -2,6 +2,8 @@
 
 > Originally forked/inspired by [eslint-plugin-import](https://github.com/benmosher/eslint-plugin-import) and [this fork](https://github.com/dannysindra/eslint-plugin-import)
 
+[![npm version](https://badge.fury.io/js/eslint-plugin-import-helpers.svg)](https://badge.fury.io/js/eslint-plugin-import-helpers)
+
 This package was created to supplement the rules provided by [eslint-plugin-import](https://github.com/benmosher/eslint-plugin-import). There are a lot of great rules in there, but we found it missing a few key use cases.
 
 # Rules
