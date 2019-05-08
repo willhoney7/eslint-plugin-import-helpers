@@ -9,17 +9,17 @@ function testFilePath(relativePath) {
 function test(t) {
 	return Object.assign(
 		{
-			filename: FILENAME
+			filename: FILENAME,
 		},
 		t,
 		{
 			parserOptions: Object.assign(
 				{
 					sourceType: 'module',
-					ecmaVersion: 6
+					ecmaVersion: 6,
 				},
 				t.parserOptions
-			)
+			),
 		}
 	);
 }
@@ -27,5 +27,5 @@ function test(t) {
 module.exports = {
 	FILENAME,
 	test,
-	testFilePath
+	testFilePath,
 };

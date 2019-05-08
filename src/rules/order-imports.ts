@@ -3,7 +3,7 @@ import {
 	isRegularExpressionGroup,
 	ValidImportType,
 	KnownImportType,
-	RegExpGroups
+	RegExpGroups,
 } from '../util/import-type';
 import { isStaticRequire } from '../util/static-require';
 
@@ -38,7 +38,7 @@ function reverse(array: Imported[]) {
 			return {
 				name: v.name,
 				rank: -v.rank,
-				node: v.node
+				node: v.node,
 			};
 		})
 		.reverse();
@@ -228,7 +228,7 @@ function fixOutOfOrder(context, firstNode: NodeOrToken, secondNode: NodeOrToken,
 					fixer.replaceTextRange(
 						[firstRootStart, secondRootEnd],
 						newCode + sourceCode.text.substring(firstRootStart, secondRootStart)
-					))
+					)),
 		});
 	} else if (order === 'after') {
 		context.report({
@@ -240,7 +240,7 @@ function fixOutOfOrder(context, firstNode: NodeOrToken, secondNode: NodeOrToken,
 					fixer.replaceTextRange(
 						[secondRootStart, firstRootEnd],
 						sourceCode.text.substring(secondRootEnd, firstRootEnd) + newCode
-					))
+					)),
 		});
 	}
 }
@@ -377,7 +377,7 @@ function removeNewLineAfterImport(context, currentImport, previousImport) {
 	const currRoot = findRootNode(currentImport.node);
 	const rangeToRemove = [
 		findEndOfLineWithComments(sourceCode, prevRoot),
-		findStartOfLineWithComments(sourceCode, currRoot)
+		findStartOfLineWithComments(sourceCode, currRoot),
 	];
 	if (/^\s*$/.test(sourceCode.text.substring(rangeToRemove[0], rangeToRemove[1]))) {
 		return (fixer) => fixer.removeRange(rangeToRemove);
@@ -410,7 +410,7 @@ function makeNewlinesBetweenReport(
 				context.report({
 					node: previousImport.node,
 					message: 'There should be at least one empty line between import groups',
-					fix: fixNewLineAfterImport(context, previousImport)
+					fix: fixNewLineAfterImport(context, previousImport),
 				});
 			} else if (
 				currentGroupRank === previousGroupRank &&
@@ -420,7 +420,7 @@ function makeNewlinesBetweenReport(
 				context.report({
 					node: previousImport.node,
 					message: 'There should be at least one empty line between imports',
-					fix: fixNewLineAfterImport(context, previousImport)
+					fix: fixNewLineAfterImport(context, previousImport),
 				});
 			} else if (
 				currentGroupRank === previousGroupRank &&
@@ -430,14 +430,14 @@ function makeNewlinesBetweenReport(
 				context.report({
 					node: previousImport.node,
 					message: 'There should be no empty line within import group',
-					fix: removeNewLineAfterImport(context, currentImport, previousImport)
+					fix: removeNewLineAfterImport(context, currentImport, previousImport),
 				});
 			}
 		} else if (emptyLinesBetween > 0) {
 			context.report({
 				node: previousImport.node,
 				message: 'There should be no empty line between import groups',
-				fix: removeNewLineAfterImport(context, currentImport, previousImport)
+				fix: removeNewLineAfterImport(context, currentImport, previousImport),
 			});
 		}
 
@@ -482,7 +482,7 @@ module.exports = {
 	meta: {
 		type: 'suggestion',
 		docs: {
-			url: 'https://github.com/Tibfib/eslint-plugin-import-helpers/blob/master/docs/rules/order-imports.md'
+			url: 'https://github.com/Tibfib/eslint-plugin-import-helpers/blob/master/docs/rules/order-imports.md',
 		},
 
 		fixable: 'code',
@@ -491,28 +491,28 @@ module.exports = {
 				type: 'object',
 				properties: {
 					groups: {
-						type: 'array'
+						type: 'array',
 					},
 					newlinesBetween: {
-						enum: newLinesBetweenOptions
+						enum: newLinesBetweenOptions,
 					},
 					alphabetize: {
 						type: 'object',
 						properties: {
 							order: {
 								enum: alphabetizeOptions,
-								default: 'ignore'
+								default: 'ignore',
 							},
 							ignoreCase: {
 								type: 'boolean',
-								default: false
-							}
-						}
-					}
+								default: false,
+							},
+						},
+					},
 				},
-				additionalProperties: false
-			}
-		]
+				additionalProperties: false,
+			},
+		],
 	},
 
 	create: function importOrderRule(context) {
@@ -532,7 +532,7 @@ module.exports = {
 			return {
 				Program: function(node) {
 					context.report(node, error.message);
-				}
+				},
 			};
 		}
 		let imported: Imported[] = [];
@@ -578,7 +578,7 @@ module.exports = {
 			'FunctionExpression:exit': decrementLevel,
 			'ArrowFunctionExpression:exit': decrementLevel,
 			'BlockStatement:exit': decrementLevel,
-			'ObjectExpression:exit': decrementLevel
+			'ObjectExpression:exit': decrementLevel,
 		};
-	}
+	},
 };
