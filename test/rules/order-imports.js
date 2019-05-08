@@ -511,429 +511,390 @@ ruleTester.run('order', rule, {
 					newlinesBetween: 'always-and-inside-groups'
 				}
 			]
+		}),
+		// fix order with spaces on the end of line
+		test({
+			code: `
+		        var parent = require('../parent');
+		        var fs = require('fs');${' '}
+		      `,
+			output: `
+		        var fs = require('fs');${' '}
+		        var parent = require('../parent');
+		      `,
+			errors: [
+				{
+					ruleId: 'order',
+					message: '`fs` import should occur before import of `../parent`'
+				}
+			]
+		}),
+		// fix order with comment on the end of line
+		test({
+			code: `
+		        var parent = require('../parent');
+		        var fs = require('fs'); /* comment */
+		      `,
+			output: `
+		        var fs = require('fs'); /* comment */
+		        var parent = require('../parent');
+		      `,
+			errors: [
+				{
+					ruleId: 'order',
+					message: '`fs` import should occur before import of `../parent`'
+				}
+			]
+		}),
+		// fix order with comments at the end and start of line
+		test({
+			code: `
+		        /* comment1 */  var parent = require('../parent'); /* comment2 */
+		        /* comment3 */  var fs = require('fs'); /* comment4 */
+		      `,
+			output: `
+		        /* comment3 */  var fs = require('fs'); /* comment4 */
+		        /* comment1 */  var parent = require('../parent'); /* comment2 */
+		      `,
+			errors: [
+				{
+					ruleId: 'order',
+					message: '`fs` import should occur before import of `../parent`'
+				}
+			]
+		}),
+		// fix order with few comments at the end and start of line
+		test({
+			code: `
+		        /* comment0 */  /* comment1 */  var parent = require('../parent'); /* comment2 */
+		        /* comment3 */  var fs = require('fs'); /* comment4 */
+		      `,
+			output: `
+		        /* comment3 */  var fs = require('fs'); /* comment4 */
+		        /* comment0 */  /* comment1 */  var parent = require('../parent'); /* comment2 */
+		      `,
+			errors: [
+				{
+					ruleId: 'order',
+					message: '`fs` import should occur before import of `../parent`'
+				}
+			]
+		}),
+		// fix order with windows end of lines
+		test({
+			code:
+				`/* comment0 */  /* comment1 */  var parent = require('../parent'); /* comment2 */` +
+				`\r\n` +
+				`/* comment3 */  var fs = require('fs'); /* comment4 */` +
+				`\r\n`,
+			output:
+				`/* comment3 */  var fs = require('fs'); /* comment4 */` +
+				`\r\n` +
+				`/* comment0 */  /* comment1 */  var parent = require('../parent'); /* comment2 */` +
+				`\r\n`,
+			errors: [
+				{
+					ruleId: 'order',
+					message: '`fs` import should occur before import of `../parent`'
+				}
+			]
+		}),
+		// fix order with multilines comments at the end and start of line
+		test({
+			code:
+				"/* multiline1\n\
+comment1 */var parent = require('../parent'); /* multiline2\n\
+comment2 */  var fs = require('fs');/* multiline3\n\
+comment3 */",
+			output:
+				"/* multiline1\n\
+comment1 */  var fs = require('fs');\n\
+var parent = require('../parent'); /* multiline2\n\
+comment2 *//* multiline3\n\
+comment3 */", // the spacing here is really sensitive
+			errors: [
+				{
+					ruleId: 'order',
+					message: '`fs` import should occur before import of `../parent`'
+				}
+			]
+		}),
+		// fix order of multiple import
+		test({
+			code: `
+		        var parent = require('../parent');
+		        var fs =
+		          require('fs');
+		      `,
+			output: `
+		        var fs =
+		          require('fs');
+		        var parent = require('../parent');
+		      `,
+			errors: [
+				{
+					ruleId: 'order',
+					message: '`fs` import should occur before import of `../parent`'
+				}
+			]
+		}),
+		// fix order at the end of file
+		test({
+			code: `
+		        var parent = require('../parent');
+		        var fs = require('fs');`,
+			output:
+				`
+		        var fs = require('fs');
+		        var parent = require('../parent');` + '\n',
+			errors: [
+				{
+					ruleId: 'order',
+					message: '`fs` import should occur before import of `../parent`'
+				}
+			]
+		}),
+		// module before parent module (import)
+		test({
+			code: `
+		        import parent from '../parent';
+		        import fs from 'fs';
+		      `,
+			output: `
+		        import fs from 'fs';
+		        import parent from '../parent';
+		      `,
+			errors: [
+				{
+					ruleId: 'order',
+					message: '`fs` import should occur before import of `../parent`'
+				}
+			]
+		}),
+		// module before parent (mixed import and require)
+		test({
+			code: `
+		        var parent = require('../parent');
+		        import fs from 'fs';
+		      `,
+			output: `
+		        import fs from 'fs';
+		        var parent = require('../parent');
+		      `,
+			errors: [
+				{
+					ruleId: 'order',
+					message: '`fs` import should occur before import of `../parent`'
+				}
+			]
+		}),
+		// parent before sibling
+		test({
+			code: `
+		    var sibling = require('./sibling');
+		    var parent = require('../parent');
+		  `,
+			output: `
+		    var parent = require('../parent');
+		    var sibling = require('./sibling');
+		  `,
+			errors: [
+				{
+					ruleId: 'order',
+					message: '`../parent` import should occur before import of `./sibling`'
+				}
+			]
+		}),
+		// sibling before index
+		test({
+			code: `
+		    var index = require('./');
+		    var sibling = require('./sibling');
+		  `,
+			output: `
+		    var sibling = require('./sibling');
+		    var index = require('./');
+		  `,
+			errors: [
+				{
+					ruleId: 'order',
+					message: '`./sibling` import should occur before import of `./`'
+				}
+			]
 		})
-		// 		// builtin before external module (require)
-		// 		test({
-		// 			code: `
-		//         var async = require('async');
-		//         var fs = require('fs');
-		//       `,
-		// 			output: `
-		//         var fs = require('fs');
-		//         var async = require('async');
-		//       `,
-		// 			errors: [
-		// 				{
-		// 					ruleId: 'order',
-		// 					message: '`fs` import should occur before import of `async`'
-		// 				}
+		// // Multiple errors
+		// test({
+		// 	code: `
+		//     var sibling = require('./sibling');
+		//     var async = require('async');
+		//     var fs = require('fs');
+		//   `,
+		// 	errors: [
+		// 		{
+		// 			ruleId: 'order',
+		// 			message: '`async` import should occur before import of `./sibling`'
+		// 		},
+		// 		{
+		// 			ruleId: 'order',
+		// 			message: '`fs` import should occur before import of `./sibling`'
+		// 		}
+		// 	]
+		// }),
+		// // Uses 'after' wording if it creates less errors
+		// test({
+		// 	code: `
+		//     var index = require('./');
+		//     var fs = require('fs');
+		//     var path = require('path');
+		//     var _ = require('lodash');
+		//     var foo = require('foo');
+		//     var bar = require('bar');
+		//   `,
+		// 	output: `
+		//     var fs = require('fs');
+		//     var path = require('path');
+		//     var _ = require('lodash');
+		//     var foo = require('foo');
+		//     var bar = require('bar');
+		//     var index = require('./');
+		//   `,
+		// 	errors: [
+		// 		{
+		// 			ruleId: 'order',
+		// 			message: '`./` import should occur after import of `bar`'
+		// 		}
+		// 	]
+		// }),
+		// // Overriding order to be the reverse of the default order
+		// test({
+		// 	code: `
+		//     var fs = require('fs');
+		//     var index = require('./');
+		//   `,
+		// 	output: `
+		//     var index = require('./');
+		//     var fs = require('fs');
+		//   `,
+		// 	options: [{ groups: ['index', 'sibling', 'parent', 'external', 'builtin'] }],
+		// 	errors: [
+		// 		{
+		// 			ruleId: 'order',
+		// 			message: '`./` import should occur before import of `fs`'
+		// 		}
+		// 	]
+		// }),
+		// // member expression of require
+		// test(
+		// 	withoutAutofixOutput({
+		// 		code: `
+		//     var foo = require('./foo').bar;
+		//     var fs = require('fs');
+		//   `,
+		// 		errors: [
+		// 			{
+		// 				ruleId: 'order',
+		// 				message: '`fs` import should occur before import of `./foo`'
+		// 			}
+		// 		]
+		// 	})
+		// ),
+		// // nested member expression of require
+		// test(
+		// 	withoutAutofixOutput({
+		// 		code: `
+		//     var foo = require('./foo').bar.bar.bar;
+		//     var fs = require('fs');
+		//   `,
+		// 		errors: [
+		// 			{
+		// 				ruleId: 'order',
+		// 				message: '`fs` import should occur before import of `./foo`'
+		// 			}
+		// 		]
+		// 	})
+		// ),
+		// // fix near nested member expression of require with newlines
+		// test(
+		// 	withoutAutofixOutput({
+		// 		code: `
+		//     var foo = require('./foo').bar
+		//       .bar
+		//       .bar;
+		//     var fs = require('fs');
+		//   `,
+		// 		errors: [
+		// 			{
+		// 				ruleId: 'order',
+		// 				message: '`fs` import should occur before import of `./foo`'
+		// 			}
+		// 		]
+		// 	})
+		// ),
+		// // fix nested member expression of require with newlines
+		// test(
+		// 	withoutAutofixOutput({
+		// 		code: `
+		//     var foo = require('./foo');
+		//     var fs = require('fs').bar
+		//       .bar
+		//       .bar;
+		//   `,
+		// 		errors: [
+		// 			{
+		// 				ruleId: 'order',
+		// 				message: '`fs` import should occur before import of `./foo`'
+		// 			}
+		// 		]
+		// 	})
+		// ),
+		// // Grouping import types
+		// test({
+		// 	code: `
+		//     var fs = require('fs');
+		//     var index = require('./');
+		//     var sibling = require('./foo');
+		//     var path = require('path');
+		//   `,
+		// 	output: `
+		//     var fs = require('fs');
+		//     var index = require('./');
+		//     var path = require('path');
+		//     var sibling = require('./foo');
+		//   `,
+		// 	options: [{ groups: [['builtin', 'index'], ['sibling', 'parent', 'external']] }],
+		// 	errors: [
+		// 		{
+		// 			ruleId: 'order',
+		// 			message: '`path` import should occur before import of `./foo`'
+		// 		}
+		// 	]
+		// }),
+		// // Omitted types should implicitly be considered as the last type
+		// test({
+		// 	code: `
+		//     var path = require('path');
+		//     var async = require('async');
+		//   `,
+		// 	output: `
+		//     var async = require('async');
+		//     var path = require('path');
+		//   `,
+		// 	options: [
+		// 		{
+		// 			groups: [
+		// 				'index',
+		// 				['sibling', 'parent', 'external', 'internal']
+		// 				// missing 'builtin'
 		// 			]
-		// 		}),
-		// 		// fix order with spaces on the end of line
-		// 		test({
-		// 			code: `
-		//         var async = require('async');
-		//         var fs = require('fs');${' '}
-		//       `,
-		// 			output: `
-		//         var fs = require('fs');${' '}
-		//         var async = require('async');
-		//       `,
-		// 			errors: [
-		// 				{
-		// 					ruleId: 'order',
-		// 					message: '`fs` import should occur before import of `async`'
-		// 				}
-		// 			]
-		// 		}),
-		// 		// fix order with comment on the end of line
-		// 		test({
-		// 			code: `
-		//         var async = require('async');
-		//         var fs = require('fs'); /* comment */
-		//       `,
-		// 			output: `
-		//         var fs = require('fs'); /* comment */
-		//         var async = require('async');
-		//       `,
-		// 			errors: [
-		// 				{
-		// 					ruleId: 'order',
-		// 					message: '`fs` import should occur before import of `async`'
-		// 				}
-		// 			]
-		// 		}),
-		// 		// fix order with comments at the end and start of line
-		// 		test({
-		// 			code: `
-		//         /* comment1 */  var async = require('async'); /* comment2 */
-		//         /* comment3 */  var fs = require('fs'); /* comment4 */
-		//       `,
-		// 			output: `
-		//         /* comment3 */  var fs = require('fs'); /* comment4 */
-		//         /* comment1 */  var async = require('async'); /* comment2 */
-		//       `,
-		// 			errors: [
-		// 				{
-		// 					ruleId: 'order',
-		// 					message: '`fs` import should occur before import of `async`'
-		// 				}
-		// 			]
-		// 		}),
-		// 		// fix order with few comments at the end and start of line
-		// 		test({
-		// 			code: `
-		//         /* comment0 */  /* comment1 */  var async = require('async'); /* comment2 */
-		//         /* comment3 */  var fs = require('fs'); /* comment4 */
-		//       `,
-		// 			output: `
-		//         /* comment3 */  var fs = require('fs'); /* comment4 */
-		//         /* comment0 */  /* comment1 */  var async = require('async'); /* comment2 */
-		//       `,
-		// 			errors: [
-		// 				{
-		// 					ruleId: 'order',
-		// 					message: '`fs` import should occur before import of `async`'
-		// 				}
-		// 			]
-		// 		}),
-		// 		// fix order with windows end of lines
-		// 		test({
-		// 			code:
-		// 				`/* comment0 */  /* comment1 */  var async = require('async'); /* comment2 */` +
-		// 				`\r\n` +
-		// 				`/* comment3 */  var fs = require('fs'); /* comment4 */` +
-		// 				`\r\n`,
-		// 			output:
-		// 				`/* comment3 */  var fs = require('fs'); /* comment4 */` +
-		// 				`\r\n` +
-		// 				`/* comment0 */  /* comment1 */  var async = require('async'); /* comment2 */` +
-		// 				`\r\n`,
-		// 			errors: [
-		// 				{
-		// 					ruleId: 'order',
-		// 					message: '`fs` import should occur before import of `async`'
-		// 				}
-		// 			]
-		// 		}),
-		// 		// fix order with multilines comments at the end and start of line
-		// 		test({
-		// 			code: `
-		//         /* multiline1
-		//           comment1 */  var async = require('async'); /* multiline2
-		//           comment2 */  var fs = require('fs'); /* multiline3
-		//           comment3 */
-		//       `,
-		// 			output:
-		// 				`
-		//         /* multiline1
-		//           comment1 */  var fs = require('fs');` +
-		// 				' ' +
-		// 				`
-		//   var async = require('async'); /* multiline2
-		//           comment2 *//* multiline3
-		//           comment3 */
-		//       `,
-		// 			errors: [
-		// 				{
-		// 					ruleId: 'order',
-		// 					message: '`fs` import should occur before import of `async`'
-		// 				}
-		// 			]
-		// 		}),
-		// 		// fix order of multile import
-		// 		test({
-		// 			code: `
-		//         var async = require('async');
-		//         var fs =
-		//           require('fs');
-		//       `,
-		// 			output: `
-		//         var fs =
-		//           require('fs');
-		//         var async = require('async');
-		//       `,
-		// 			errors: [
-		// 				{
-		// 					ruleId: 'order',
-		// 					message: '`fs` import should occur before import of `async`'
-		// 				}
-		// 			]
-		// 		}),
-		// 		// fix order at the end of file
-		// 		test({
-		// 			code: `
-		//         var async = require('async');
-		//         var fs = require('fs');`,
-		// 			output:
-		// 				`
-		//         var fs = require('fs');
-		//         var async = require('async');` + '\n',
-		// 			errors: [
-		// 				{
-		// 					ruleId: 'order',
-		// 					message: '`fs` import should occur before import of `async`'
-		// 				}
-		// 			]
-		// 		}),
-		// 		// builtin before external module (import)
-		// 		test({
-		// 			code: `
-		//         import async from 'async';
-		//         import fs from 'fs';
-		//       `,
-		// 			output: `
-		//         import fs from 'fs';
-		//         import async from 'async';
-		//       `,
-		// 			errors: [
-		// 				{
-		// 					ruleId: 'order',
-		// 					message: '`fs` import should occur before import of `async`'
-		// 				}
-		// 			]
-		// 		}),
-		// 		// builtin before external module (mixed import and require)
-		// 		test({
-		// 			code: `
-		//         var async = require('async');
-		//         import fs from 'fs';
-		//       `,
-		// 			output: `
-		//         import fs from 'fs';
-		//         var async = require('async');
-		//       `,
-		// 			errors: [
-		// 				{
-		// 					ruleId: 'order',
-		// 					message: '`fs` import should occur before import of `async`'
-		// 				}
-		// 			]
-		// 		}),
-		// 		// external before parent
-		// 		test({
-		// 			code: `
-		//         var parent = require('../parent');
-		//         var async = require('async');
-		//       `,
-		// 			output: `
-		//         var async = require('async');
-		//         var parent = require('../parent');
-		//       `,
-		// 			errors: [
-		// 				{
-		// 					ruleId: 'order',
-		// 					message: '`async` import should occur before import of `../parent`'
-		// 				}
-		// 			]
-		// 		}),
-		// 		// parent before sibling
-		// 		test({
-		// 			code: `
-		//         var sibling = require('./sibling');
-		//         var parent = require('../parent');
-		//       `,
-		// 			output: `
-		//         var parent = require('../parent');
-		//         var sibling = require('./sibling');
-		//       `,
-		// 			errors: [
-		// 				{
-		// 					ruleId: 'order',
-		// 					message: '`../parent` import should occur before import of `./sibling`'
-		// 				}
-		// 			]
-		// 		}),
-		// 		// sibling before index
-		// 		test({
-		// 			code: `
-		//         var index = require('./');
-		//         var sibling = require('./sibling');
-		//       `,
-		// 			output: `
-		//         var sibling = require('./sibling');
-		//         var index = require('./');
-		//       `,
-		// 			errors: [
-		// 				{
-		// 					ruleId: 'order',
-		// 					message: '`./sibling` import should occur before import of `./`'
-		// 				}
-		// 			]
-		// 		}),
-		// 		// Multiple errors
-		// 		test({
-		// 			code: `
-		//         var sibling = require('./sibling');
-		//         var async = require('async');
-		//         var fs = require('fs');
-		//       `,
-		// 			errors: [
-		// 				{
-		// 					ruleId: 'order',
-		// 					message: '`async` import should occur before import of `./sibling`'
-		// 				},
-		// 				{
-		// 					ruleId: 'order',
-		// 					message: '`fs` import should occur before import of `./sibling`'
-		// 				}
-		// 			]
-		// 		}),
-		// 		// Uses 'after' wording if it creates less errors
-		// 		test({
-		// 			code: `
-		//         var index = require('./');
-		//         var fs = require('fs');
-		//         var path = require('path');
-		//         var _ = require('lodash');
-		//         var foo = require('foo');
-		//         var bar = require('bar');
-		//       `,
-		// 			output: `
-		//         var fs = require('fs');
-		//         var path = require('path');
-		//         var _ = require('lodash');
-		//         var foo = require('foo');
-		//         var bar = require('bar');
-		//         var index = require('./');
-		//       `,
-		// 			errors: [
-		// 				{
-		// 					ruleId: 'order',
-		// 					message: '`./` import should occur after import of `bar`'
-		// 				}
-		// 			]
-		// 		}),
-		// 		// Overriding order to be the reverse of the default order
-		// 		test({
-		// 			code: `
-		//         var fs = require('fs');
-		//         var index = require('./');
-		//       `,
-		// 			output: `
-		//         var index = require('./');
-		//         var fs = require('fs');
-		//       `,
-		// 			options: [{ groups: ['index', 'sibling', 'parent', 'external', 'builtin'] }],
-		// 			errors: [
-		// 				{
-		// 					ruleId: 'order',
-		// 					message: '`./` import should occur before import of `fs`'
-		// 				}
-		// 			]
-		// 		}),
-		// 		// member expression of require
-		// 		test(
-		// 			withoutAutofixOutput({
-		// 				code: `
-		//         var foo = require('./foo').bar;
-		//         var fs = require('fs');
-		//       `,
-		// 				errors: [
-		// 					{
-		// 						ruleId: 'order',
-		// 						message: '`fs` import should occur before import of `./foo`'
-		// 					}
-		// 				]
-		// 			})
-		// 		),
-		// 		// nested member expression of require
-		// 		test(
-		// 			withoutAutofixOutput({
-		// 				code: `
-		//         var foo = require('./foo').bar.bar.bar;
-		//         var fs = require('fs');
-		//       `,
-		// 				errors: [
-		// 					{
-		// 						ruleId: 'order',
-		// 						message: '`fs` import should occur before import of `./foo`'
-		// 					}
-		// 				]
-		// 			})
-		// 		),
-		// 		// fix near nested member expression of require with newlines
-		// 		test(
-		// 			withoutAutofixOutput({
-		// 				code: `
-		//         var foo = require('./foo').bar
-		//           .bar
-		//           .bar;
-		//         var fs = require('fs');
-		//       `,
-		// 				errors: [
-		// 					{
-		// 						ruleId: 'order',
-		// 						message: '`fs` import should occur before import of `./foo`'
-		// 					}
-		// 				]
-		// 			})
-		// 		),
-		// 		// fix nested member expression of require with newlines
-		// 		test(
-		// 			withoutAutofixOutput({
-		// 				code: `
-		//         var foo = require('./foo');
-		//         var fs = require('fs').bar
-		//           .bar
-		//           .bar;
-		//       `,
-		// 				errors: [
-		// 					{
-		// 						ruleId: 'order',
-		// 						message: '`fs` import should occur before import of `./foo`'
-		// 					}
-		// 				]
-		// 			})
-		// 		),
-		// 		// Grouping import types
-		// 		test({
-		// 			code: `
-		//         var fs = require('fs');
-		//         var index = require('./');
-		//         var sibling = require('./foo');
-		//         var path = require('path');
-		//       `,
-		// 			output: `
-		//         var fs = require('fs');
-		//         var index = require('./');
-		//         var path = require('path');
-		//         var sibling = require('./foo');
-		//       `,
-		// 			options: [{ groups: [['builtin', 'index'], ['sibling', 'parent', 'external']] }],
-		// 			errors: [
-		// 				{
-		// 					ruleId: 'order',
-		// 					message: '`path` import should occur before import of `./foo`'
-		// 				}
-		// 			]
-		// 		}),
-		// 		// Omitted types should implicitly be considered as the last type
-		// 		test({
-		// 			code: `
-		//         var path = require('path');
-		//         var async = require('async');
-		//       `,
-		// 			output: `
-		//         var async = require('async');
-		//         var path = require('path');
-		//       `,
-		// 			options: [
-		// 				{
-		// 					groups: [
-		// 						'index',
-		// 						['sibling', 'parent', 'external', 'internal']
-		// 						// missing 'builtin'
-		// 					]
-		// 				}
-		// 			],
-		// 			errors: [
-		// 				{
-		// 					ruleId: 'order',
-		// 					message: '`async` import should occur before import of `path`'
-		// 				}
-		// 			]
-		// 		}),
+		// 		}
+		// 	],
+		// 	errors: [
+		// 		{
+		// 			ruleId: 'order',
+		// 			message: '`async` import should occur before import of `path`'
+		// 		}
+		// 	]
+		// }),
 		// 		// Setting the order for an unknown type
 		// 		// should make the rule trigger an error and do nothing else
 		// 		test({
