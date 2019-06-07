@@ -1041,492 +1041,493 @@ comment3 */", // the spacing here is really sensitive
 				},
 			],
 		}),
-		// 		// Fix newlinesBetween with comments after
-		// 		test({
-		// 			code: `
-		//         var fs = require('fs'); /* comment */
-		//         var index = require('./');
-		//       `,
-		// 			output: `
-		//         var fs = require('fs'); /* comment */
-		//         var index = require('./');
-		//       `,
-		// 			options: [
-		// 				{
-		// 					groups: [['builtin'], ['index']],
-		// 					newlinesBetween: 'never'
-		// 				}
-		// 			],
-		// 			errors: [
-		// 				{
-		// 					line: 2,
-		// 					message: 'There should be no empty line between import groups'
-		// 				}
-		// 			]
-		// 		}),
-		// 		// Cannot fix newlinesBetween with multiline comment after
-		// 		test({
-		// 			code: `
-		//         var fs = require('fs'); /* multiline
-		//         comment */
-		//         var index = require('./');
-		//       `,
-		// 			output: `
-		//         var fs = require('fs'); /* multiline
-		//         comment */
-		//         var index = require('./');
-		//       `,
-		// 			options: [
-		// 				{
-		// 					groups: [['builtin'], ['index']],
-		// 					newlinesBetween: 'never'
-		// 				}
-		// 			],
-		// 			errors: [
-		// 				{
-		// 					line: 2,
-		// 					message: 'There should be no empty line between import groups'
-		// 				}
-		// 			]
-		// 		}),
-		// 		// Option newlinesBetween: 'always' - should report lack of newline between groups
-		// 		test({
-		// 			code: `
-		//         var fs = require('fs');
-		//         var index = require('./');
-		//         var path = require('path');
-		//         var sibling = require('./foo');
-		//         var relParent1 = require('../foo');
-		//         var relParent3 = require('../');
-		//         var async = require('async');
-		//       `,
-		// 			output: `
-		//         var fs = require('fs');
-		//         var index = require('./');
-		//         var path = require('path');
-		//         var sibling = require('./foo');
-		//         var relParent1 = require('../foo');
-		//         var relParent3 = require('../');
-		//         var async = require('async');
-		//       `,
-		// 			options: [
-		// 				{
-		// 					groups: [['builtin', 'index'], ['sibling'], ['parent', 'external']],
-		// 					newlinesBetween: 'always'
-		// 				}
-		// 			],
-		// 			errors: [
-		// 				{
-		// 					line: 4,
-		// 					message: 'There should be at least one empty line between import groups'
-		// 				},
-		// 				{
-		// 					line: 5,
-		// 					message: 'There should be at least one empty line between import groups'
-		// 				}
-		// 			]
-		// 		}),
-		// 		// Option newlinesBetween: 'always' should report unnecessary empty lines space between import groups
-		// 		test({
-		// 			code: `
-		//         var fs = require('fs');
-		//         var path = require('path');
-		//         var index = require('./');
-		//         var sibling = require('./foo');
-		//         var async = require('async');
-		//       `,
-		// 			output: `
-		//         var fs = require('fs');
-		//         var path = require('path');
-		//         var index = require('./');
-		//         var sibling = require('./foo');
-		//         var async = require('async');
-		//       `,
-		// 			options: [
-		// 				{
-		// 					groups: [['builtin', 'index'], ['sibling', 'parent', 'external']],
-		// 					newlinesBetween: 'always'
-		// 				}
-		// 			],
-		// 			errors: [
-		// 				{
-		// 					line: 2,
-		// 					message: 'There should be no empty line within import group'
-		// 				},
-		// 				{
-		// 					line: 7,
-		// 					message: 'There should be no empty line within import group'
-		// 				}
-		// 			]
-		// 		}),
-		// 		// Option newlinesBetween: 'never' cannot fix if there are other statements between imports
-		// 		test({
-		// 			code: `
-		//         import path from 'path';
-		//         import 'loud-rejection';
-		//         import 'something-else';
-		//         import _ from 'lodash';
-		//       `,
-		// 			output: `
-		//         import path from 'path';
-		//         import 'loud-rejection';
-		//         import 'something-else';
-		//         import _ from 'lodash';
-		//       `,
-		// 			options: [{ newlinesBetween: 'never' }],
-		// 			errors: [
-		// 				{
-		// 					line: 2,
-		// 					message: 'There should be no empty line between import groups'
-		// 				}
-		// 			]
-		// 		}),
-		// 		// Option newlinesBetween: 'always' should report missing empty lines when using not assigned imports
-		// 		test({
-		// 			code: `
-		//         import path from 'path';
-		//         import 'loud-rejection';
-		//         import 'something-else';
-		//         import _ from 'lodash';
-		//       `,
-		// 			output: `
-		//         import path from 'path';
-		//         import 'loud-rejection';
-		//         import 'something-else';
-		//         import _ from 'lodash';
-		//       `,
-		// 			options: [{ newlinesBetween: 'always' }],
-		// 			errors: [
-		// 				{
-		// 					line: 2,
-		// 					message: 'There should be at least one empty line between import groups'
-		// 				}
-		// 			]
-		// 		}),
-		// 		// fix missing empty lines with single line comment after
-		// 		test({
-		// 			code: `
-		//         import path from 'path'; // comment
-		//         import _ from 'lodash';
-		//       `,
-		// 			output: `
-		//         import path from 'path'; // comment
-		//         import _ from 'lodash';
-		//       `,
-		// 			options: [{ newlinesBetween: 'always' }],
-		// 			errors: [
-		// 				{
-		// 					line: 2,
-		// 					message: 'There should be at least one empty line between import groups'
-		// 				}
-		// 			]
-		// 		}),
-		// 		// fix missing empty lines with few line block comment after
-		// 		test({
-		// 			code: `
-		//         import path from 'path'; /* comment */ /* comment */
-		//         import _ from 'lodash';
-		//       `,
-		// 			output: `
-		//         import path from 'path'; /* comment */ /* comment */
-		//         import _ from 'lodash';
-		//       `,
-		// 			options: [{ newlinesBetween: 'always' }],
-		// 			errors: [
-		// 				{
-		// 					line: 2,
-		// 					message: 'There should be at least one empty line between import groups'
-		// 				}
-		// 			]
-		// 		}),
-		// 		// fix missing empty lines with single line block comment after
-		// 		test({
-		// 			code: `
-		//         import path from 'path'; /* 1
-		//         2 */
-		//         import _ from 'lodash';
-		//       `,
-		// 			output: `
-		//         import path from 'path';
-		//  /* 1
-		//         2 */
-		//         import _ from 'lodash';
-		//       `,
-		// 			options: [{ newlinesBetween: 'always' }],
-		// 			errors: [
-		// 				{
-		// 					line: 2,
-		// 					message: 'There should be at least one empty line between import groups'
-		// 				}
-		// 			]
-		// 		}),
-		// 		// reorder fix cannot cross non import or require
-		// 		test(
-		// 			withoutAutofixOutput({
-		// 				code: `
-		//         var async = require('async');
-		//         fn_call();
-		//         var fs = require('fs');
-		//       `,
-		// 				errors: [
-		// 					{
-		// 						ruleId: 'order',
-		// 						message: '`fs` import should occur before import of `async`'
-		// 					}
-		// 				]
-		// 			})
-		// 		),
-		// 		// reorder cannot cross non plain requires
-		// 		test(
-		// 			withoutAutofixOutput({
-		// 				code: `
-		//         var async = require('async');
-		//         var a = require('./value.js')(a);
-		//         var fs = require('fs');
-		//       `,
-		// 				errors: [
-		// 					{
-		// 						ruleId: 'order',
-		// 						message: '`fs` import should occur before import of `async`'
-		// 					}
-		// 				]
-		// 			})
-		// 		),
-		// 		// reorder fixes cannot be applied to non plain requires #1
-		// 		test(
-		// 			withoutAutofixOutput({
-		// 				code: `
-		//         var async = require('async');
-		//         var fs = require('fs')(a);
-		//       `,
-		// 				errors: [
-		// 					{
-		// 						ruleId: 'order',
-		// 						message: '`fs` import should occur before import of `async`'
-		// 					}
-		// 				]
-		// 			})
-		// 		),
-		// 		// reorder fixes cannot be applied to non plain requires #2
-		// 		test(
-		// 			withoutAutofixOutput({
-		// 				code: `
-		//         var async = require('async')(a);
-		//         var fs = require('fs');
-		//       `,
-		// 				errors: [
-		// 					{
-		// 						ruleId: 'order',
-		// 						message: '`fs` import should occur before import of `async`'
-		// 					}
-		// 				]
-		// 			})
-		// 		),
-		// 		// cannot require in case of not assignement require
-		// 		test(
-		// 			withoutAutofixOutput({
-		// 				code: `
-		//         var async = require('async');
-		//         require('./aa');
-		//         var fs = require('fs');
-		//       `,
-		// 				errors: [
-		// 					{
-		// 						ruleId: 'order',
-		// 						message: '`fs` import should occur before import of `async`'
-		// 					}
-		// 				]
-		// 			})
-		// 		),
-		// 		// reorder cannot cross function call (import statement)
-		// 		test(
-		// 			withoutAutofixOutput({
-		// 				code: `
-		//         import async from 'async';
-		//         fn_call();
-		//         import fs from 'fs';
-		//       `,
-		// 				errors: [
-		// 					{
-		// 						ruleId: 'order',
-		// 						message: '`fs` import should occur before import of `async`'
-		// 					}
-		// 				]
-		// 			})
-		// 		),
-		// 		// reorder cannot cross variable assignemet (import statement)
-		// 		test(
-		// 			withoutAutofixOutput({
-		// 				code: `
-		//         import async from 'async';
-		//         var a = 1;
-		//         import fs from 'fs';
-		//       `,
-		// 				errors: [
-		// 					{
-		// 						ruleId: 'order',
-		// 						message: '`fs` import should occur before import of `async`'
-		// 					}
-		// 				]
-		// 			})
-		// 		),
-		// 		// reorder cannot cross non plain requires (import statement)
-		// 		test(
-		// 			withoutAutofixOutput({
-		// 				code: `
-		//         import async from 'async';
-		//         var a = require('./value.js')(a);
-		//         import fs from 'fs';
-		//       `,
-		// 				errors: [
-		// 					{
-		// 						ruleId: 'order',
-		// 						message: '`fs` import should occur before import of `async`'
-		// 					}
-		// 				]
-		// 			})
-		// 		),
-		// 		// cannot reorder in case of not assignement import
-		// 		test(
-		// 			withoutAutofixOutput({
-		// 				code: `
-		//         import async from 'async';
-		//         import './aa';
-		//         import fs from 'fs';
-		//       `,
-		// 				errors: [
-		// 					{
-		// 						ruleId: 'order',
-		// 						message: '`fs` import should occur before import of `async`'
-		// 					}
-		// 				]
-		// 			})
-		// 		),
-		// 		// fix incorrect order with @typescript-eslint/parser
-		// 		test({
-		// 			code: `
-		//         var async = require('async');
-		//         var fs = require('fs');
-		//       `,
-		// 			output: `
-		//         var fs = require('fs');
-		//         var async = require('async');
-		//       `,
-		// 			parser: '@typescript-eslint/parser',
-		// 			errors: [
-		// 				{
-		// 					ruleId: 'order',
-		// 					message: '`fs` import should occur before import of `async`'
-		// 				}
-		// 			]
-		// 		}),
-		// 		// Option alphabetize: {order: 'asc', ignoreCase: false}
-		// 		test({
-		// 			code: `
-		//         import bar from 'bar';
-		//         import Baz from 'Baz';
-		//         import foo from 'foo';
-		//         import index from './';
-		//       `,
-		// 			output: `
-		//         import Baz from 'Baz';
-		//         import bar from 'bar';
-		//         import foo from 'foo';
-		//         import index from './';
-		//       `,
-		// 			options: [
-		// 				{
-		// 					groups: ['external', 'index'],
-		// 					alphabetize: { order: 'asc', ignoreCase: false }
-		// 				}
-		// 			],
-		// 			errors: [
-		// 				{
-		// 					ruleID: 'order',
-		// 					message: '`Baz` import should occur before import of `bar`'
-		// 				}
-		// 			]
-		// 		}),
-		// 		// Option alphabetize: {order: 'asc', ignoreCase: true}
-		// 		test({
-		// 			code: `
-		//         import Baz from 'Baz';
-		//         import bar from 'bar';
-		//         import foo from 'foo';
-		//         import index from './';
-		//       `,
-		// 			output: `
-		//         import bar from 'bar';
-		//         import Baz from 'Baz';
-		//         import foo from 'foo';
-		//         import index from './';
-		//       `,
-		// 			options: [
-		// 				{
-		// 					groups: ['external', 'index'],
-		// 					alphabetize: { order: 'asc', ignoreCase: true }
-		// 				}
-		// 			],
-		// 			errors: [
-		// 				{
-		// 					ruleID: 'order',
-		// 					message: '`bar` import should occur before import of `Baz`'
-		// 				}
-		// 			]
-		// 		}),
-		// 		// Option alphabetize: {order: 'desc', ignoreCase: false}
-		// 		test({
-		// 			code: `
-		//         import foo from 'foo';
-		//         import Baz from 'Baz';
-		//         import bar from 'bar';
-		//         import index from './';
-		//       `,
-		// 			output: `
-		//         import foo from 'foo';
-		//         import bar from 'bar';
-		//         import Baz from 'Baz';
-		//         import index from './';
-		//       `,
-		// 			options: [
-		// 				{
-		// 					groups: ['external', 'index'],
-		// 					alphabetize: { order: 'desc', ignoreCase: false }
-		// 				}
-		// 			],
-		// 			errors: [
-		// 				{
-		// 					ruleID: 'order',
-		// 					message: '`bar` import should occur before import of `Baz`'
-		// 				}
-		// 			]
-		// 		}),
-		// 		// Option alphabetize: {order: 'desc', ignoreCase: true}
-		// 		test({
-		// 			code: `
-		//         import foo from 'foo';
-		//         import bar from 'bar';
-		//         import Baz from 'Baz';
-		//         import index from './';
-		//       `,
-		// 			output: `
-		//         import foo from 'foo';
-		//         import Baz from 'Baz';
-		//         import bar from 'bar';
-		//         import index from './';
-		//       `,
-		// 			options: [
-		// 				{
-		// 					groups: ['external', 'index'],
-		// 					alphabetize: { order: 'desc', ignoreCase: true }
-		// 				}
-		// 			],
-		// 			errors: [
-		// 				{
-		// 					ruleID: 'order',
-		// 					message: '`Baz` import should occur before import of `bar`'
-		// 				}
-		// 			]
-		// 		})
+		// Fix newlinesBetween with comments after
+		test({
+			code: `
+				var fs = require('fs'); /* comment */
+
+				var index = require('./');`,
+			output: `
+				var fs = require('fs'); /* comment */
+				var index = require('./');`,
+			options: [
+				{
+					groups: [['module'], ['index']],
+					newlinesBetween: 'never',
+				},
+			],
+			errors: [
+				{
+					line: 2,
+					message: 'There should be no empty line between import groups',
+				},
+			],
+		}),
+		// Cannot fix newlinesBetween with multiline comment after
+		test({
+			code: `
+		        var fs = require('fs'); /* multiline
+				comment */
+				
+		        var index = require('./');
+		      `,
+			output: `
+		        var fs = require('fs'); /* multiline
+				comment */
+				
+		        var index = require('./');
+		      `,
+			options: [
+				{
+					groups: [['module'], ['index']],
+					newlinesBetween: 'never',
+				},
+			],
+			errors: [
+				{
+					line: 2,
+					message: 'There should be no empty line between import groups',
+				},
+			],
+		}),
+		// Option newlinesBetween: 'always' - should report lack of newline between groups
+		test({
+			code: `
+				var fs = require('fs');
+				var index = require('./');
+				var path = require('path');
+				var sibling = require('./foo');
+				var relParent1 = require('../foo');
+				var relParent3 = require('../');`,
+			output: `
+				var fs = require('fs');
+				var index = require('./');
+				var path = require('path');
+
+				var sibling = require('./foo');
+
+				var relParent1 = require('../foo');
+				var relParent3 = require('../');`,
+			options: [
+				{
+					groups: [['module', 'index'], ['sibling'], ['parent']],
+					newlinesBetween: 'always',
+				},
+			],
+			errors: [
+				{
+					line: 4,
+					message: 'There should be at least one empty line between import groups',
+				},
+				{
+					line: 5,
+					message: 'There should be at least one empty line between import groups',
+				},
+			],
+		}),
+		// Option newlinesBetween: 'always' should report unnecessary empty lines space between import groups
+		test({
+			code: `
+				var fs = require('fs');
+
+				var path = require('path');
+				var index = require('./');
+
+				var sibling = require('./foo');
+		      `,
+			output: `
+				var fs = require('fs');
+				var path = require('path');
+				var index = require('./');
+
+				var sibling = require('./foo');
+		      `,
+			options: [
+				{
+					groups: [['module', 'index'], ['sibling', 'parent']],
+					newlinesBetween: 'always',
+				},
+			],
+			errors: [
+				{
+					line: 2,
+					message: 'There should be no empty line within import group',
+				},
+			],
+		}),
+		// Option newlinesBetween: 'never' cannot fix if there are other statements between imports
+		test({
+			code: `
+		        import path from 'path';
+				import 'loud-rejection';
+				
+		        import 'something-else';
+		        import _ from 'lodash';
+		      `,
+			output: `
+		        import path from 'path';
+				import 'loud-rejection';
+				
+		        import 'something-else';
+		        import _ from 'lodash';
+		      `,
+			options: [{ newlinesBetween: 'never' }],
+			errors: [
+				{
+					line: 2,
+					message: 'There should be no empty line between import groups',
+				},
+			],
+		}),
+		// Option newlinesBetween: 'always' should report missing empty lines when using not assigned imports
+		test({
+			code: `
+				import path from 'path';
+				import 'loud-rejection';
+				import 'something-else';
+				import _ from './relative';
+		      `,
+			output: `
+				import path from 'path';
+
+				import 'loud-rejection';
+				import 'something-else';
+				import _ from './relative';
+		      `,
+			options: [{ newlinesBetween: 'always' }],
+			errors: [
+				{
+					line: 2,
+					message: 'There should be at least one empty line between import groups',
+				},
+			],
+		}),
+		// fix missing empty lines with single line comment after
+		test({
+			code: `
+				import path from 'path'; // comment
+				import _ from './relative';
+		      `,
+			output: `
+				import path from 'path'; // comment
+
+				import _ from './relative';
+		      `,
+			options: [{ newlinesBetween: 'always' }],
+			errors: [
+				{
+					line: 2,
+					message: 'There should be at least one empty line between import groups',
+				},
+			],
+		}),
+		// fix missing empty lines with few line block comment after
+		test({
+			code: `
+				import path from 'path'; /* comment */ /* comment */
+				import _ from './relative';
+		      `,
+			output: `
+				import path from 'path'; /* comment */ /* comment */
+
+				import _ from './relative';
+		      `,
+			options: [{ newlinesBetween: 'always' }],
+			errors: [
+				{
+					line: 2,
+					message: 'There should be at least one empty line between import groups',
+				},
+			],
+		}),
+		// fix missing empty lines with single line block comment after
+		test({
+			code: `
+				import path from 'path'; /* 1
+				2 */
+				import _ from './relative';
+		      `,
+			output: `
+				import path from 'path';
+ /* 1
+				2 */
+				import _ from './relative';
+		      `,
+			options: [{ newlinesBetween: 'always' }],
+			errors: [
+				{
+					line: 2,
+					message: 'There should be at least one empty line between import groups',
+				},
+			],
+		}),
+		// reorder fix cannot cross non import or require
+		test(
+			withoutAutofixOutput({
+				code: `
+				var relative = require('./relative');
+				fn_call();
+				var fs = require('fs');
+		      `,
+				errors: [
+					{
+						ruleId: 'order',
+						message: '`fs` import should occur before import of `./relative`',
+					},
+				],
+			})
+		),
+		// reorder cannot cross non plain requires
+		test(
+			withoutAutofixOutput({
+				code: `
+		        var relative = require('./relative');
+		        var a = require('./value.js')(a);
+		        var fs = require('fs');
+		      `,
+				errors: [
+					{
+						ruleId: 'order',
+						message: '`fs` import should occur before import of `./relative`',
+					},
+				],
+			})
+		),
+		// reorder fixes cannot be applied to non plain requires #1
+		test(
+			withoutAutofixOutput({
+				code: `
+		        var relative = require('./relative');
+		        var fs = require('fs')(a);
+		      `,
+				errors: [
+					{
+						ruleId: 'order',
+						message: '`fs` import should occur before import of `./relative`',
+					},
+				],
+			})
+		),
+		// reorder fixes cannot be applied to non plain requires #2
+		test(
+			withoutAutofixOutput({
+				code: `
+		        var relative = require('./relative')(a);
+		        var fs = require('fs');
+		      `,
+				errors: [
+					{
+						ruleId: 'order',
+						message: '`fs` import should occur before import of `./relative`',
+					},
+				],
+			})
+		),
+		// cannot require in case of not assignement require
+		test(
+			withoutAutofixOutput({
+				code: `
+		        var relative = require('./relative');
+		        require('./aa');
+		        var fs = require('fs');
+		      `,
+				errors: [
+					{
+						ruleId: 'order',
+						message: '`fs` import should occur before import of `./relative`',
+					},
+				],
+			})
+		),
+		// reorder cannot cross function call (import statement)
+		test(
+			withoutAutofixOutput({
+				code: `
+		        import relative from './relative';
+		        fn_call();
+		        import fs from 'fs';
+		      `,
+				errors: [
+					{
+						ruleId: 'order',
+						message: '`fs` import should occur before import of `./relative`',
+					},
+				],
+			})
+		),
+		// reorder cannot cross variable assignemet (import statement)
+		test(
+			withoutAutofixOutput({
+				code: `
+		        import relative from './relative';
+		        var a = 1;
+		        import fs from 'fs';
+		      `,
+				errors: [
+					{
+						ruleId: 'order',
+						message: '`fs` import should occur before import of `./relative`',
+					},
+				],
+			})
+		),
+		// reorder cannot cross non plain requires (import statement)
+		test(
+			withoutAutofixOutput({
+				code: `
+		        import relative from './relative';
+		        var a = require('./value.js')(a);
+		        import fs from 'fs';
+		      `,
+				errors: [
+					{
+						ruleId: 'order',
+						message: '`fs` import should occur before import of `./relative`',
+					},
+				],
+			})
+		),
+		// cannot reorder in case of not assignement import
+		test(
+			withoutAutofixOutput({
+				code: `
+		        import relative from './relative';
+		        import './aa';
+		        import fs from 'fs';
+		      `,
+				errors: [
+					{
+						ruleId: 'order',
+						message: '`fs` import should occur before import of `./relative`',
+					},
+				],
+			})
+		),
+		// fix incorrect order with @typescript-eslint/parser
+		test({
+			code: `
+		        var relative = require('./relative');
+		        var fs = require('fs');
+		      `,
+			output: `
+		        var fs = require('fs');
+		        var relative = require('./relative');
+		      `,
+			parser: '@typescript-eslint/parser',
+			errors: [
+				{
+					ruleId: 'order',
+					message: '`fs` import should occur before import of `./relative`',
+				},
+			],
+		}),
+		// Option alphabetize: {order: 'asc', ignoreCase: false}
+		test({
+			code: `
+		        import bar from 'bar';
+		        import Baz from 'Baz';
+		        import foo from 'foo';
+		        import index from './';
+		      `,
+			output: `
+		        import Baz from 'Baz';
+		        import bar from 'bar';
+		        import foo from 'foo';
+		        import index from './';
+		      `,
+			options: [
+				{
+					groups: ['module', 'index'],
+					alphabetize: { order: 'asc', ignoreCase: false },
+				},
+			],
+			errors: [
+				{
+					ruleID: 'order',
+					message: '`Baz` import should occur before import of `bar`',
+				},
+			],
+		}),
+		// Option alphabetize: {order: 'asc', ignoreCase: true}
+		test({
+			code: `
+		        import Baz from 'Baz';
+		        import bar from 'bar';
+		        import foo from 'foo';
+		        import index from './';
+		      `,
+			output: `
+		        import bar from 'bar';
+		        import Baz from 'Baz';
+		        import foo from 'foo';
+		        import index from './';
+		      `,
+			options: [
+				{
+					groups: ['module', 'index'],
+					alphabetize: { order: 'asc', ignoreCase: true },
+				},
+			],
+			errors: [
+				{
+					ruleID: 'order',
+					message: '`bar` import should occur before import of `Baz`',
+				},
+			],
+		}),
+		// Option alphabetize: {order: 'desc', ignoreCase: false}
+		test({
+			code: `
+		        import foo from 'foo';
+		        import Baz from 'Baz';
+		        import bar from 'bar';
+		        import index from './';
+		      `,
+			output: `
+		        import foo from 'foo';
+		        import bar from 'bar';
+		        import Baz from 'Baz';
+		        import index from './';
+		      `,
+			options: [
+				{
+					groups: ['module', 'index'],
+					alphabetize: { order: 'desc', ignoreCase: false },
+				},
+			],
+			errors: [
+				{
+					ruleID: 'order',
+					message: '`bar` import should occur before import of `Baz`',
+				},
+			],
+		}),
+		// Option alphabetize: {order: 'desc', ignoreCase: true}
+		test({
+			code: `
+		        import foo from 'foo';
+		        import bar from 'bar';
+		        import Baz from 'Baz';
+		        import index from './';
+		      `,
+			output: `
+		        import foo from 'foo';
+		        import Baz from 'Baz';
+		        import bar from 'bar';
+		        import index from './';
+		      `,
+			options: [
+				{
+					groups: ['module', 'index'],
+					alphabetize: { order: 'desc', ignoreCase: true },
+				},
+			],
+			errors: [
+				{
+					ruleID: 'order',
+					message: '`Baz` import should occur before import of `bar`',
+				},
+			],
+		}),
 	],
 });

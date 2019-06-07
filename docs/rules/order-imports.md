@@ -80,10 +80,10 @@ The enforced order is the same as the order of each element in a group. Omitted 
 
 ```js
 [
-	'module', // Built-in types are first
+	'module', // Module types are first (not relative or absolute paths)
 	['sibling', 'parent'], // Then sibling and parent types. They can be mingled together
 	'/^shared/', // any import paths starting with 'shared'
-	'index' // Then the index file
+	'index', // Then the index file
 	// Then the rest: internal and external type
 ];
 ```
