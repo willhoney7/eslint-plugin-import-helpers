@@ -1,9 +1,10 @@
 const gulp = require('gulp');
-const babel = require('gulp-babel');
+const ts = require('gulp-typescript');
 const rimraf = require('rimraf');
 
-const SRC = 'src/**/*.js';
+const SRC = 'src/**/?(*.js|*.ts)';
 const DEST = 'lib';
+const tsProject = ts.createProject('tsconfig.json');
 
 gulp.task('clean', function(done) {
 	rimraf(DEST, done);
@@ -12,7 +13,7 @@ gulp.task('clean', function(done) {
 gulp.task('src', ['clean'], function() {
 	return gulp
 		.src(SRC)
-		.pipe(babel())
+		.pipe(tsProject())
 		.pipe(gulp.dest(DEST));
 });
 

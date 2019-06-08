@@ -1,5 +1,4 @@
-// todo: merge with module visitor
-module.exports = function isStaticRequire(node) {
+export function isStaticRequire(node: any): boolean {
 	return (
 		node &&
 		node.callee &&
@@ -9,4 +8,4 @@ module.exports = function isStaticRequire(node) {
 		node.arguments[0].type === 'Literal' &&
 		typeof node.arguments[0].value === 'string'
 	);
-};
+}

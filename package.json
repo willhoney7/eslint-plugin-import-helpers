@@ -1,11 +1,13 @@
 {
 	"name": "eslint-plugin-import-helpers",
-	"version": "0.1.4",
+	"version": "1.0.0-0",
 	"description": "ESLint Rules to Aid with Imports",
 	"main": "lib/index.js",
 	"scripts": {
-		"prepublish": "gulp prepublish",
-		"test": "node ./test/run-all"
+		"build": "gulp src",
+		"prepublish": "npm run build",
+		"test": "npm run build && npm run test-quick",
+		"test-quick": "NODE_PATH=./lib nyc -s mocha -R dot --recursive test -t test-results"
 	},
 	"keywords": [
 		"eslint",
@@ -22,18 +24,15 @@
 		"eslint": "2.x - 5.x"
 	},
 	"devDependencies": {
-		"@babel/core": "^7.4.0",
+		"@types/node": "^11.12.2",
 		"@typescript-eslint/parser": "^1.5.0",
 		"eslint": "^5.15.3",
 		"gulp": "^3.9.0",
-		"gulp-babel": "6.1.2",
+		"gulp-typescript": "^5.0.1",
+		"mocha": "^6.1.2",
+		"nyc": "^13.3.0",
 		"rimraf": "2.5.2",
-		"typescript": "^3.3.4000"
+		"typescript": "^3.4.1"
 	},
-	"dependencies": {
-		"builtin-modules": "^1.1.1",
-		"eslint-import-resolver-node": "^0.3.2",
-		"eslint-module-utils": "^2.3.0",
-		"lodash.cond": "^4.5.2"
-	}
+	"dependencies": {}
 }
