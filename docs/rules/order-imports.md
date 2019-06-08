@@ -151,9 +151,11 @@ import Baz from 'Baz';
 
 ## Upgrading from v0.14 to v1
 
-In v0.14, the `module` setting was split into `builtin`, `external`, `internal`.
+### `builtin` | `external` | `internal` → `module`
 
-If you want to keep the same `builtin` functionality, create a custom regular expression group to replace it, like so. If you don't, the builtin modules will be grouped with the other `module`s.
+In v1, `builtin`, `external`, `internal` have all been combined into one group, `module`. This simplifies the logic for this rule and makes it so it ONLY looks at the import strings and doesn't attempt any module resolution itself. The same functionality can be accomplished using regular expression groups.
+
+If you want to keep the same `builtin` functionality, create a custom regular expression group to replace it, like so.
 
 ```javascript
 // v0.14
@@ -165,4 +167,8 @@ groups: [
 ];
 ```
 
-If you want to keep the same `internal`/`external` functionality, create a custom regular expression group with your modules.
+If you want to keep the same `internal`/`external` functionality, create a custom regular expression group with your modules names.
+
+### `'newlines-between' → 'newlinesBetween'`
+
+In v1, the `newLinesBetween` configuration option is now in camel case.
