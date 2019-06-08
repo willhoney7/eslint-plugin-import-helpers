@@ -15,7 +15,7 @@ type AlphabetizeConfig = { order: AlphabetizeOption; ignoreCase: boolean };
 const alphabetizeOptions: AlphabetizeOption[] = ['ignore', 'asc', 'desc'];
 
 type Groups = (ValidImportType | ValidImportType[])[];
-const defaultGroups: Groups = ['module', 'parent', 'sibling', 'index'];
+const defaultGroups: Groups = ['absolute', 'module', 'parent', 'sibling', 'index'];
 
 type RuleOptions = {
 	groups?: Groups;

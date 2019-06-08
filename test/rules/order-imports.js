@@ -25,8 +25,9 @@ ruleTester.run('order', rule, {
 		// Default order using import
 		test({
 			code: `
-				import async, {foo1} from 'async';
-        import fs from 'fs';
+		import abs from '/absolute-path';
+		import async, {foo1} from 'async';
+		import fs from 'fs';
         import relParent1 from '../foo';
         import relParent2, {foo2} from '../foo/bar';
         import relParent3 from '../';

@@ -10,7 +10,7 @@ This package was created to supplement the rules provided by [eslint-plugin-impo
 
 #### [`order-imports`]
 
-Enforce a _configurable_ convention in module import order
+Enforce a _configurable_ convention in module import order. See the [`order-imports`] page for configuration details.
 
 ```javascript
 // Given ESLint Config
@@ -20,7 +20,7 @@ rules: {
       {
           newlinesBetween: 'always', // new line between groups
           groups: [
-              ['builtin', 'external', 'internal'],
+              'module',
               '/^@shared/',
               ['parent', 'sibling', 'index'],
           ],
@@ -71,7 +71,7 @@ To add a rule, update your `.eslintrc.(yml|json|js)`:
             { // example configuration
                 newlinesBetween: 'always',
                 groups: [
-                    ['builtin', 'external', 'internal'],
+                    'module',
                     '/^@shared/',
                     ['parent', 'sibling', 'index'],
                 ],
