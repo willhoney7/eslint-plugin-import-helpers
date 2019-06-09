@@ -2,7 +2,8 @@ export function isAbsolute(name: string): boolean {
 	return name.indexOf('/') === 0;
 }
 
-const moduleRegExp = /^\w/;
+// a module is anything that doesn't start with a . or a / or a \
+const moduleRegExp = /^[^\/\\.]/;
 export function isModule(name: string): boolean {
 	return moduleRegExp.test(name);
 }

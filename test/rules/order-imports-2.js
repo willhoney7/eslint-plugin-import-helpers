@@ -8,34 +8,41 @@ const rule = require('rules/order-imports');
 ruleTester.run('order', rule, {
 	valid: [
 		// Default order using import
+		// absolute at top
+		// modules starting with _ or @ are sorted with modules
 		test({
 			code: `
+				import abs from '/absolute/module';
+
+				import blah from '_lodash';
+				import module from '@module/core';
+				import print from '@module/print';
 				import async, {foo1} from 'async';
 				import fs from 'fs';
-				
-		    import relParent1 from '../foo';
+
+		    	import relParent1 from '../foo';
 				import relParent2, {foo2} from '../foo/bar';
-				
+
 				import relParent3 from '@shared';
-				
+
 				import sibling, {foo3} from './foo';
-				
+
 				import index from './';`,
 			options: [
 				{
-					groups: ['module', 'parent', '/@shared/', 'sibling', 'index'],
+					groups: ['absolute', 'module', 'parent', '/@shared/', 'sibling', 'index'],
 					alphabetize: { order: 'asc', ignoreCase: true },
-					newlinesBetween: 'always'
-				}
-			]
+					newlinesBetween: 'always',
+				},
+			],
 		}),
 		test({
 			code: `
 				import async, {foo1} from 'async';
 				import fs from 'fs';
-				
+
 				import relParent3 from '@shared';
-				
+
 				import relParent1 from '../foo';
 				import relParent2, {foo2} from '../foo/bar';
 				import index from './';
@@ -44,39 +51,39 @@ ruleTester.run('order', rule, {
 				{
 					groups: [['module'], '/@shared/', ['parent', 'sibling', 'index']],
 					alphabetize: { order: 'asc', ignoreCase: true },
-					newlinesBetween: 'always'
-				}
-			]
+					newlinesBetween: 'always',
+				},
+			],
 		}),
 		test({
 			code: `
 				import fs from 'fs';
 				import async, {foo1} from 'async';
-				
+
 				import relParent3 from '@shared';
-				
+
 				import relParent1 from '../foo';
 				import relParent2, {foo2} from '../foo/bar';
 
 				import sibling, {foo3} from './foo';
-				
+
 				import index from './';
 				`,
 			options: [
 				{
 					groups: ['module', '/^@shared/', 'parent', 'sibling', 'index'],
-					newlinesBetween: 'always'
-				}
-			]
+					newlinesBetween: 'always',
+				},
+			],
 		}),
 		test({
 			code: `
 				import async, {foo1} from 'async';
 
 				import fs from 'fs';
-				
+
 				import relParent3 from '@shared';
-				
+
 				import relParent1 from '../foo';
 
 				import relParent2, {foo2} from '../foo/bar';
@@ -88,10 +95,10 @@ ruleTester.run('order', rule, {
 				{
 					groups: [['module'], '/@shared/', ['parent', 'sibling', 'index']],
 					alphabetize: { order: 'asc', ignoreCase: true },
-					newlinesBetween: 'always-and-inside-groups'
-				}
-			]
-		})
+					newlinesBetween: 'always-and-inside-groups',
+				},
+			],
+		}),
 	],
 	invalid: [
 		// Option alphabetize: {order: 'desc', ignoreCase: true}
@@ -111,15 +118,15 @@ ruleTester.run('order', rule, {
 			options: [
 				{
 					groups: ['module', 'index'],
-					alphabetize: { order: 'desc', ignoreCase: true }
-				}
+					alphabetize: { order: 'desc', ignoreCase: true },
+				},
 			],
 			errors: [
 				{
 					ruleID: 'order',
-					message: '`Baz` import should occur before import of `bar`'
-				}
-			]
-		})
-	]
+					message: '`Baz` import should occur before import of `bar`',
+				},
+			],
+		}),
+	],
 });
