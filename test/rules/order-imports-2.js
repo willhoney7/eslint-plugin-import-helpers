@@ -11,15 +11,17 @@ ruleTester.run('order', rule, {
 		test({
 			code: `
 				import async, {foo1} from 'async';
+				import module from '@module/core';
+				import print from '@module/print';
 				import fs from 'fs';
-				
+
 		    import relParent1 from '../foo';
 				import relParent2, {foo2} from '../foo/bar';
-				
+
 				import relParent3 from '@shared';
-				
+
 				import sibling, {foo3} from './foo';
-				
+
 				import index from './';`,
 			options: [
 				{
@@ -33,9 +35,9 @@ ruleTester.run('order', rule, {
 			code: `
 				import async, {foo1} from 'async';
 				import fs from 'fs';
-				
+
 				import relParent3 from '@shared';
-				
+
 				import relParent1 from '../foo';
 				import relParent2, {foo2} from '../foo/bar';
 				import index from './';
@@ -52,14 +54,14 @@ ruleTester.run('order', rule, {
 			code: `
 				import fs from 'fs';
 				import async, {foo1} from 'async';
-				
+
 				import relParent3 from '@shared';
-				
+
 				import relParent1 from '../foo';
 				import relParent2, {foo2} from '../foo/bar';
 
 				import sibling, {foo3} from './foo';
-				
+
 				import index from './';
 				`,
 			options: [
@@ -74,9 +76,9 @@ ruleTester.run('order', rule, {
 				import async, {foo1} from 'async';
 
 				import fs from 'fs';
-				
+
 				import relParent3 from '@shared';
-				
+
 				import relParent1 from '../foo';
 
 				import relParent2, {foo2} from '../foo/bar';

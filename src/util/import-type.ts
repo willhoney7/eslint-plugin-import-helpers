@@ -2,7 +2,7 @@ export function isAbsolute(name: string): boolean {
 	return name.indexOf('/') === 0;
 }
 
-const moduleRegExp = /^\w/;
+const moduleRegExp = /^[^/\\.]/;
 export function isModule(name: string): boolean {
 	return moduleRegExp.test(name);
 }
