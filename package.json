@@ -1,6 +1,6 @@
 {
 	"name": "eslint-plugin-import-helpers",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"description": "ESLint Rules to Aid with Imports",
 	"main": "lib/index.js",
 	"scripts": {
