@@ -21,7 +21,7 @@
 	"author": "Will Honey",
 	"license": "MIT",
 	"peerDependencies": {
-		"eslint": "2.x - 5.x"
+		"eslint": "2.x - 6.x"
 	},
 	"devDependencies": {
 		"@types/node": "^11.12.2",
