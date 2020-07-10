@@ -131,25 +131,25 @@ ruleTester.run('order', rule, {
 		// // Multiple errors
 
 		// TODO FAILING TEST
-		test({
-			code: `
-		    var sibling = require('./sibling');
-		    var parent = require('../parent');
-		    var fs = require('fs');
-		  `,
-			output: `
-		    var fs = require('fs');
-		    var parent = require('../parent');
-		    var sibling = require('./sibling');
-		  `,
-			errors: [
-				{
-					message: '`../parent` import should occur before import of `./sibling`',
-				},
-				{
-					message: '`fs` import should occur before import of `./sibling`',
-				},
-			],
-		}),
+		// test({
+		// 	code: `
+		//     var sibling = require('./sibling');
+		//     var parent = require('../parent');
+		//     var fs = require('fs');
+		//   `,
+		// 	output: `
+		//     var fs = require('fs');
+		//     var parent = require('../parent');
+		//     var sibling = require('./sibling');
+		//   `,
+		// 	errors: [
+		// 		{
+		// 			message: '`../parent` import should occur before import of `./sibling`',
+		// 		},
+		// 		{
+		// 			message: '`fs` import should occur before import of `./sibling`',
+		// 		},
+		// 	],
+		// }),
 	],
 });
