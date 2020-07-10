@@ -1,4 +1,4 @@
-const RuleTester = require('eslint/lib/testers/rule-tester');
+const RuleTester = require('eslint').RuleTester;
 
 const { test } = require('../utils');
 
@@ -123,10 +123,33 @@ ruleTester.run('order', rule, {
 			],
 			errors: [
 				{
-					ruleID: 'order',
 					message: '`Baz` import should occur before import of `bar`',
 				},
 			],
 		}),
+
+		// // Multiple errors
+
+		// TODO FAILING TEST
+		// test({
+		// 	code: `
+		//     var sibling = require('./sibling');
+		//     var parent = require('../parent');
+		//     var fs = require('fs');
+		//   `,
+		// 	output: `
+		//     var fs = require('fs');
+		//     var parent = require('../parent');
+		//     var sibling = require('./sibling');
+		//   `,
+		// 	errors: [
+		// 		{
+		// 			message: '`../parent` import should occur before import of `./sibling`',
+		// 		},
+		// 		{
+		// 			message: '`fs` import should occur before import of `./sibling`',
+		// 		},
+		// 	],
+		// }),
 	],
 });
