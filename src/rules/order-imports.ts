@@ -17,10 +17,14 @@ const alphabetizeOptions: AlphabetizeOption[] = ['ignore', 'asc', 'desc'];
 type Groups = (ValidImportType | ValidImportType[])[];
 const defaultGroups: Groups = ['absolute', 'module', 'parent', 'sibling', 'index'];
 
+type UnassignedImportsOption = 'allow' | 'ignore';
+const unassignedImportsOption: UnassignedImportsOption[] = ['allow', 'ignore'];
+
 type RuleOptions = {
 	groups?: Groups;
 	newlinesBetween?: NewLinesBetweenOption;
 	alphabetize?: Partial<AlphabetizeConfig>;
+	unassignedImports?: UnassignedImportsOption;
 };
 
 type ImportType = 'require' | 'import';
@@ -496,6 +500,9 @@ module.exports = {
 					newlinesBetween: {
 						enum: newLinesBetweenOptions,
 					},
+					unassignedImports: {
+						enum: unassignedImportsOption,
+					},
 					alphabetize: {
 						type: 'object',
 						properties: {
@@ -518,6 +525,7 @@ module.exports = {
 	create: function importOrderRule(context) {
 		const options: RuleOptions = context.options[0] || {};
 		const newlinesBetweenImports: NewLinesBetweenOption = options.newlinesBetween || 'ignore';
+		const unassignedImports = options.unassignedImports || 'ignore';
 
 		let alphabetize: AlphabetizeConfig;
 		let ranks: Ranks;
@@ -543,7 +551,7 @@ module.exports = {
 
 		return {
 			ImportDeclaration: function handleImports(node) {
-				if (node.specifiers.length) {
+				if (node.specifiers.length || unassignedImports === 'allow') {
 					// Ignoring unassigned imports
 					const name: string = node.source.value;
 					registerNode(node, name, 'import', ranks, regExpGroups, imported);
