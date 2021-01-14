@@ -1471,5 +1471,31 @@ comment3 */", // the spacing here is really sensitive
 				},
 			],
 		}),
+		// Option unassignedImports: 'allow' should consider unassigned imports when sorting for respective groups
+		test({
+			code: `
+				import './an-unassigned-relative';
+				import path from 'path';
+				import _ from './relative';
+				import 'an-unassigned-module';
+		      `,
+			output: `
+				import './an-unassigned-relative';
+				import path from 'path';
+				import _ from './relative';
+				import 'an-unassigned-module';
+		      `,
+			options: [{ unassignedImports: 'allow' }],
+			errors: [
+				{
+					line: 3,
+					message: '`path` import should occur before import of `./an-unassigned-relative`',
+				},
+				{
+					line: 5,
+					message: '`an-unassigned-module` import should occur before import of `./an-unassigned-relative`',
+				},
+			],
+		}),
 	],
 });

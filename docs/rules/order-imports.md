@@ -156,7 +156,7 @@ Unassigned imports refers to imports which are not assigned to any variable but 
 Example:
 ```js
 import 'polyfill'
-import 'containers/styles.scss'
+import 'styles.scss'
 ```
 
 By default unassigned imports are ignored, as the order they are imported in may be important.
