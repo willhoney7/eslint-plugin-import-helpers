@@ -85,3 +85,17 @@ To add a rule, update your `.eslintrc.(yml|json|js)`:
 # TypeScript
 
 To use this plugin with TypeScript, you must use the TypeScript parser for ESLint. See [@typescript-eslint/parser](https://github.com/typescript-eslint/typescript-eslint/tree/master/packages/parser) for more details.
+
+# Working with This Repo
+
+## Dependencies
+| Name                                                          | Version |
+| ------------------------------------------------------------- | ------- |
+| [node.js](https://nodejs.org)                                 | 10.x    |
+| [yarn](https://classic.yarnpkg.com/) | 1.x     |
+
+Gulp v3 is the thing keeping us at node.js v10
+
+## Running Tests
+First, `yarn install`
+Then, `yarn test`
