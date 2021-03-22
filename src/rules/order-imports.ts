@@ -182,11 +182,12 @@ function isPlainRequireModule(node): boolean {
 	);
 }
 
+const isUnassignedImportsAllowed = (context) => getOptions(context).unassignedImports === 'allow';
+
 function isAllowedImportModule(node: NodeOrToken, context): boolean {
-	const unassignedImportsAllowed = getOptions(context).unassignedImports === 'allow';
 	const hasNodeSpecifier = node.specifiers != null && node.specifiers.length > 0;
 
-	return node.type === 'ImportDeclaration' && (hasNodeSpecifier || unassignedImportsAllowed);
+	return node.type === 'ImportDeclaration' && (hasNodeSpecifier || isUnassignedImportsAllowed(context));
 }
 
 function canCrossNodeWhileReorder(node: NodeOrToken, context): boolean {
@@ -566,7 +567,8 @@ module.exports = {
 				}
 			},
 			CallExpression: function handleRequires(node) {
-				if (level !== 0 || !isStaticRequire(node) || !isInVariableDeclarator(node.parent)) {
+				const isUnassignedRequire = !isInVariableDeclarator(node.parent);
+				if (level !== 0 || !isStaticRequire(node) || (!isUnassignedImportsAllowed(context) && isUnassignedRequire)) {
 					return;
 				}
 				const name: string = node.arguments[0].value;
