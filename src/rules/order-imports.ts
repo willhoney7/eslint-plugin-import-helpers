@@ -16,6 +16,7 @@ const alphabetizeOptions: AlphabetizeOption[] = ['ignore', 'asc', 'desc'];
 
 type Groups = (ValidImportType | ValidImportType[])[];
 const defaultGroups: Groups = ['absolute', 'module', 'parent', 'sibling', 'index'];
+const MAX_GROUP_SIZE = 100000; // Higher than the number of imports we would ever expect to see in a single file.
 
 type RuleOptions = {
 	groups?: Groups;
@@ -71,7 +72,7 @@ function getTokensOrCommentsBefore(sourceCode, node, count): NodeOrToken[] {
 }
 
 function takeTokensAfterWhile(sourceCode, node, condition): NodeOrToken[] {
-	const tokens: NodeOrToken[] = getTokensOrCommentsAfter(sourceCode, node, 100);
+	const tokens: NodeOrToken[] = getTokensOrCommentsAfter(sourceCode, node, MAX_GROUP_SIZE);
 	const result: NodeOrToken = [];
 	for (let i = 0; i < tokens.length; i++) {
 		if (condition(tokens[i])) {
@@ -84,7 +85,7 @@ function takeTokensAfterWhile(sourceCode, node, condition): NodeOrToken[] {
 }
 
 function takeTokensBeforeWhile(sourceCode, node, condition): NodeOrToken[] {
-	const tokens: NodeOrToken[] = getTokensOrCommentsBefore(sourceCode, node, 100);
+	const tokens: NodeOrToken[] = getTokensOrCommentsBefore(sourceCode, node, MAX_GROUP_SIZE);
 	const result: NodeOrToken[] = [];
 	for (let i = tokens.length - 1; i >= 0; i--) {
 		if (condition(tokens[i])) {
@@ -292,7 +293,7 @@ function mutateRanksToAlphabetize(imported, order, ignoreCase) {
 	// add decimal ranking to sort within the group
 	const alphabetizedRanks = groupRanks.sort().reduce(function(acc, groupRank) {
 		groupedByRanks[groupRank].forEach(function(importedItemName, index) {
-			acc[importedItemName] = +groupRank + index / 100;
+			acc[importedItemName] = +groupRank + index / MAX_GROUP_SIZE;
 		});
 		return acc;
 	}, {});
@@ -312,7 +313,7 @@ function getRegExpGroups(ranks: Ranks): RegExpGroups {
 // DETECTING
 
 function computeRank(ranks: Ranks, regExpGroups, name: string, type: ImportType): number {
-	return ranks[determineImportType(name, regExpGroups)] + (type === 'import' ? 0 : 100);
+	return ranks[determineImportType(name, regExpGroups)] + (type === 'import' ? 0 : MAX_GROUP_SIZE);
 }
 
 function registerNode(node: NodeOrToken, name: string, type: ImportType, ranks, regExpGroups, imported: Imported[]) {
