@@ -5,12 +5,16 @@
 	"main": "lib/index.js",
 	"scripts": {
 		"build": "gulp src",
+		"lint": "npm run lint:js",
+		"lint:js": "eslint .",
 		"prepublish": "npm run build",
 		"test": "npm run build && npm run test-quick",
 		"test-quick": "NODE_PATH=./lib nyc -s mocha -R dot --recursive test -t test-results"
 	},
 	"keywords": [
 		"eslint",
+		"eslint-plugin",
+		"eslintplugin",
 		"import",
 		"eslint-plugin-import",
 		"configurable"
@@ -25,12 +29,18 @@
 	},
 	"devDependencies": {
 		"@types/node": "^14.17.33",
+		"@typescript-eslint/eslint-plugin": "^5.9.0",
 		"@typescript-eslint/parser": "^5.3.1",
-		"eslint": "^8.2.0",
+		"eslint": "^8.6.0",
+		"eslint-config-prettier": "^8.3.0",
+		"eslint-plugin-eslint-plugin": "^4.1.0",
+		"eslint-plugin-node": "^11.1.0",
+		"eslint-plugin-prettier": "^4.0.0",
 		"gulp": "^3.9.0",
 		"gulp-typescript": "^5.0.1",
 		"mocha": "^6.1.2",
 		"nyc": "^13.3.0",
+		"prettier": "^2.5.1",
 		"rimraf": "^3.0.2",
 		"typescript": "^4.4.4"
 	},

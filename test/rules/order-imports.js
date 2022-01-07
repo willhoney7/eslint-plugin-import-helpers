@@ -3,7 +3,7 @@ const RuleTester = require('eslint').RuleTester;
 const { test } = require('../utils');
 
 const ruleTester = new RuleTester();
-const rule = require('rules/order-imports');
+const { default: rule } = require('../../lib/rules/order-imports');
 
 function withoutAutofixOutput(test) {
 	return Object.assign({}, test, { output: test.code });
@@ -137,7 +137,14 @@ ruleTester.run('order', rule, {
         var relParent3 = require('../');
         var relParent1 = require('../foo');
       `,
-			options: [{ groups: [['module', 'index'], ['sibling', 'parent']] }],
+			options: [
+				{
+					groups: [
+						['module', 'index'],
+						['sibling', 'parent'],
+					],
+				},
+			],
 		}),
 		// Omitted types should implicitly be considered as the last type
 		test({
@@ -482,10 +489,12 @@ ruleTester.run('order', rule, {
 		// With large number of imports in the same group to ensure no newlines are inserted into group.
 		test({
 			code: generateImports(150),
-			options: [{
-				newlinesBetween: 'always',
-				alphabetize: { order: 'asc',},
-		  	}],
+			options: [
+				{
+					newlinesBetween: 'always',
+					alphabetize: { order: 'asc' },
+				},
+			],
 		}),
 	],
 	invalid: [
@@ -612,13 +621,11 @@ ruleTester.run('order', rule, {
 		}),
 		// fix order with multilines comments at the end and start of line
 		test({
-			code:
-				"/* multiline1\n\
+			code: "/* multiline1\n\
 comment1 */var parent = require('../parent'); /* multiline2\n\
 comment2 */  var fs = require('fs');/* multiline3\n\
 comment3 */",
-			output:
-				"/* multiline1\n\
+			output: "/* multiline1\n\
 comment1 */  var fs = require('fs');\n\
 var parent = require('../parent'); /* multiline2\n\
 comment2 *//* multiline3\n\
@@ -776,7 +783,7 @@ comment3 */", // the spacing here is really sensitive
 		  `,
 				errors: [
 					{
-							message: '`fs` import should occur before import of `./foo`',
+						message: '`fs` import should occur before import of `./foo`',
 					},
 				],
 			})
@@ -790,7 +797,7 @@ comment3 */", // the spacing here is really sensitive
 		  `,
 				errors: [
 					{
-							message: '`fs` import should occur before import of `./foo`',
+						message: '`fs` import should occur before import of `./foo`',
 					},
 				],
 			})
@@ -806,7 +813,7 @@ comment3 */", // the spacing here is really sensitive
 		  `,
 				errors: [
 					{
-							message: '`fs` import should occur before import of `./foo`',
+						message: '`fs` import should occur before import of `./foo`',
 					},
 				],
 			})
@@ -822,7 +829,7 @@ comment3 */", // the spacing here is really sensitive
 		  `,
 				errors: [
 					{
-							message: '`fs` import should occur before import of `./foo`',
+						message: '`fs` import should occur before import of `./foo`',
 					},
 				],
 			})
@@ -841,7 +848,14 @@ comment3 */", // the spacing here is really sensitive
 		    var path = require('path');
 		    var sibling = require('./foo');
 		  `,
-			options: [{ groups: [['module', 'index'], ['sibling', 'parent']] }],
+			options: [
+				{
+					groups: [
+						['module', 'index'],
+						['sibling', 'parent'],
+					],
+				},
+			],
 			errors: [
 				{
 					message: '`path` import should occur before import of `./foo`',
@@ -1116,7 +1130,10 @@ comment3 */", // the spacing here is really sensitive
 		      `,
 			options: [
 				{
-					groups: [['module', 'index'], ['sibling', 'parent']],
+					groups: [
+						['module', 'index'],
+						['sibling', 'parent'],
+					],
 					newlinesBetween: 'always',
 				},
 			],
@@ -1243,7 +1260,7 @@ comment3 */", // the spacing here is really sensitive
 		      `,
 				errors: [
 					{
-							message: '`fs` import should occur before import of `./relative`',
+						message: '`fs` import should occur before import of `./relative`',
 					},
 				],
 			})
@@ -1258,7 +1275,7 @@ comment3 */", // the spacing here is really sensitive
 		      `,
 				errors: [
 					{
-							message: '`fs` import should occur before import of `./relative`',
+						message: '`fs` import should occur before import of `./relative`',
 					},
 				],
 			})
@@ -1272,7 +1289,7 @@ comment3 */", // the spacing here is really sensitive
 		      `,
 				errors: [
 					{
-							message: '`fs` import should occur before import of `./relative`',
+						message: '`fs` import should occur before import of `./relative`',
 					},
 				],
 			})
@@ -1286,7 +1303,7 @@ comment3 */", // the spacing here is really sensitive
 		      `,
 				errors: [
 					{
-							message: '`fs` import should occur before import of `./relative`',
+						message: '`fs` import should occur before import of `./relative`',
 					},
 				],
 			})
@@ -1301,7 +1318,7 @@ comment3 */", // the spacing here is really sensitive
 		      `,
 				errors: [
 					{
-							message: '`fs` import should occur before import of `./relative`',
+						message: '`fs` import should occur before import of `./relative`',
 					},
 				],
 			})
@@ -1316,7 +1333,7 @@ comment3 */", // the spacing here is really sensitive
 		      `,
 				errors: [
 					{
-							message: '`fs` import should occur before import of `./relative`',
+						message: '`fs` import should occur before import of `./relative`',
 					},
 				],
 			})
@@ -1331,7 +1348,7 @@ comment3 */", // the spacing here is really sensitive
 		      `,
 				errors: [
 					{
-							message: '`fs` import should occur before import of `./relative`',
+						message: '`fs` import should occur before import of `./relative`',
 					},
 				],
 			})
@@ -1346,7 +1363,7 @@ comment3 */", // the spacing here is really sensitive
 		      `,
 				errors: [
 					{
-							message: '`fs` import should occur before import of `./relative`',
+						message: '`fs` import should occur before import of `./relative`',
 					},
 				],
 			})
@@ -1361,7 +1378,7 @@ comment3 */", // the spacing here is really sensitive
 		      `,
 				errors: [
 					{
-							message: '`fs` import should occur before import of `./relative`',
+						message: '`fs` import should occur before import of `./relative`',
 					},
 				],
 			})

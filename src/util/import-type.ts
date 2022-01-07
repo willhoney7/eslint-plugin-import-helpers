@@ -3,7 +3,7 @@ export function isAbsolute(name: string): boolean {
 }
 
 // a module is anything that doesn't start with a . or a / or a \
-const moduleRegExp = /^[^\/\\.]/;
+const moduleRegExp = /^[^/\\.]/;
 export function isModule(name: string): boolean {
 	return moduleRegExp.test(name);
 }
