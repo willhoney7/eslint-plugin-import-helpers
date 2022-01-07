@@ -9,6 +9,14 @@ function withoutAutofixOutput(test) {
 	return Object.assign({}, test, { output: test.code });
 }
 
+function generateImports(count) {
+	const imports = [];
+	for (let i = 0; i < count; i++) {
+		imports.push(`import foo${i} from './foo${i}.js';`);
+	}
+	return imports.sort().join('\n');
+}
+
 ruleTester.run('order', rule, {
 	valid: [
 		// Default order using require
@@ -226,7 +234,7 @@ ruleTester.run('order', rule, {
 		test({
 			code: `
 			var fs = require('fs');
-			
+
       var async = require('async');
 
       var index = require('./');
@@ -267,7 +275,7 @@ ruleTester.run('order', rule, {
         import net
           from 'net';
 				import external from 'external'
-				
+
 				import foo from './foo';
       `,
 			options: [{ newlinesBetween: 'always' }],
@@ -367,7 +375,7 @@ ruleTester.run('order', rule, {
 				var fs = require('fs');
 
 				var path = require('path');
-			
+
 				var util = require('util');
 
 				var async = require('async');
@@ -375,13 +383,13 @@ ruleTester.run('order', rule, {
 
 
 				var relParent1 = require('../foo');
-				
+
         var relParent2 = require('../');
 
         var relParent3 = require('../bar');
 
 				var sibling = require('./foo');
-				
+
         var sibling2 = require('./bar');
 
         var sibling3 = require('./foobar');
@@ -395,7 +403,7 @@ ruleTester.run('order', rule, {
 		// Option alphabetize: {order: 'ignore'}
 		test({
 			code: `
-        import foo from 'foo';  
+        import foo from 'foo';
         import bar from 'bar';
 
         import index from './';
@@ -470,6 +478,14 @@ ruleTester.run('order', rule, {
 					alphabetize: { order: 'desc', ignoreCase: true },
 				},
 			],
+		}),
+		// With large number of imports in the same group to ensure no newlines are inserted into group.
+		test({
+			code: generateImports(150),
+			options: [{
+				newlinesBetween: 'always',
+				alphabetize: { order: 'asc',},
+		  	}],
 		}),
 	],
 	invalid: [
@@ -1024,13 +1040,13 @@ comment3 */", // the spacing here is really sensitive
 			code: `
 		        var fs = require('fs'); /* multiline
 				comment */
-				
+
 		        var index = require('./');
 		      `,
 			output: `
 		        var fs = require('fs'); /* multiline
 				comment */
-				
+
 		        var index = require('./');
 		      `,
 			options: [
@@ -1116,14 +1132,14 @@ comment3 */", // the spacing here is really sensitive
 			code: `
 		        import path from 'path';
 				import 'loud-rejection';
-				
+
 		        import 'something-else';
 		        import _ from 'lodash';
 		      `,
 			output: `
 		        import path from 'path';
 				import 'loud-rejection';
-				
+
 		        import 'something-else';
 		        import _ from 'lodash';
 		      `,
