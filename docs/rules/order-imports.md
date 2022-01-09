@@ -23,7 +23,7 @@ import main from './';
 
 Notes:
 
--   Unassigned imports are ignored (ex: `import 'polyfill'`), as the order they are imported in may be important.
+-   Unassigned imports are ignored (ex: `import 'polyfill'`), as the order they are imported in may be important. Use 'unassignedImports' option if you'd like to allow them.
 -   Statements using the ES6 `import` syntax must appear before any `require()` statements.
 
 ## Usage
@@ -147,6 +147,60 @@ This will fail the rule check:
 import foo from 'foo';
 import bar from 'bar';
 import Baz from 'Baz';
+```
+
+### `unassignedImports: [ignore|allow] (default: ignore)`
+
+Unassigned imports refers to imports which are not assigned to any variable but are imported globally.
+
+Example:
+```js
+import 'polyfill'
+import 'styles.scss'
+```
+
+By default unassigned imports are ignored, as the order they are imported in may be important.
+
+-  If set to `allow`, considers unassigned imports like any other imports when ordering.
+-  If set to `ignore`, does not consider the ordering for this import.
+
+Examples:
+
+#### ignore
+```js
+/* eslint import-helpers/order-imports: [
+    "error",
+    {
+        unassignedImports: 'ignore',
+        groups: [['module'], '/\.scss$/']
+    },
+] */
+
+/* Any placement of 'styles.scss' is VALID */
+import 'styles.scss';
+import fs from 'fs';
+import path from 'path';
+```
+
+#### allow
+```js
+/* eslint import-helpers/order-imports: [
+    "error",
+    {
+        unassignedImports: 'allow',
+        groups: [['module'], '/\.scss$/']
+    },
+] */
+
+/* INVALID */
+import 'styles.scss'
+import fs from 'fs';
+import path from 'path';
+
+/* VALID */
+import fs from 'fs';
+import path from 'path';
+import 'styles.scss'
 ```
 
 ## Upgrading from v0.14 to v1

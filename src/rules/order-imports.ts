@@ -18,10 +18,14 @@ type Groups = (ValidImportType | ValidImportType[])[];
 const defaultGroups: Groups = ['absolute', 'module', 'parent', 'sibling', 'index'];
 const MAX_GROUP_SIZE = 100000; // Higher than the number of imports we would ever expect to see in a single file.
 
+type UnassignedImportsOption = 'allow' | 'ignore';
+const unassignedImportsOption: UnassignedImportsOption[] = ['allow', 'ignore'];
+
 type RuleOptions = {
 	groups?: Groups;
 	newlinesBetween?: NewLinesBetweenOption;
 	alphabetize?: Partial<AlphabetizeConfig>;
+	unassignedImports?: UnassignedImportsOption;
 };
 
 type ImportType = 'require' | 'import';
@@ -179,21 +183,25 @@ function isPlainRequireModule(node): boolean {
 	);
 }
 
-function isPlainImportModule(node: NodeOrToken): boolean {
-	return node.type === 'ImportDeclaration' && node.specifiers != null && node.specifiers.length > 0;
+const isUnassignedImportsAllowed = (context) => getOptions(context).unassignedImports === 'allow';
+
+function isAllowedImportModule(node: NodeOrToken, context): boolean {
+	const hasNodeSpecifier = node.specifiers != null && node.specifiers.length > 0;
+
+	return node.type === 'ImportDeclaration' && (hasNodeSpecifier || isUnassignedImportsAllowed(context));
 }
 
-function canCrossNodeWhileReorder(node: NodeOrToken): boolean {
-	return isPlainRequireModule(node) || isPlainImportModule(node);
+function canCrossNodeWhileReorder(node: NodeOrToken, context): boolean {
+	return isPlainRequireModule(node) || isAllowedImportModule(node, context);
 }
 
-function canReorderItems(firstNode: NodeOrToken, secondNode: NodeOrToken): boolean {
+function canReorderItems(firstNode: NodeOrToken, secondNode: NodeOrToken, context): boolean {
 	const parent = firstNode.parent;
 	const firstIndex = parent.body.indexOf(firstNode);
 	const secondIndex = parent.body.indexOf(secondNode);
 	const nodesBetween = parent.body.slice(firstIndex, secondIndex + 1);
 	for (var nodeBetween of nodesBetween) {
-		if (!canCrossNodeWhileReorder(nodeBetween)) {
+		if (!canCrossNodeWhileReorder(nodeBetween, context)) {
 			return false;
 		}
 	}
@@ -210,7 +218,7 @@ function fixOutOfOrder(context, firstNode: NodeOrToken, secondNode: NodeOrToken,
 	const secondRoot = findRootNode(secondNode.node);
 	const secondRootStart = findStartOfLineWithComments(sourceCode, secondRoot);
 	const secondRootEnd = findEndOfLineWithComments(sourceCode, secondRoot);
-	const canFix = canReorderItems(firstRoot, secondRoot);
+	const canFix = canReorderItems(firstRoot, secondRoot, context);
 
 	let newCode = sourceCode.text.substring(secondRootStart, secondRootEnd);
 	if (newCode[newCode.length - 1] !== '\n') {
@@ -479,6 +487,12 @@ function getAlphabetizeConfig(options: RuleOptions): AlphabetizeConfig {
 	return { order, ignoreCase };
 }
 
+function getOptions(context) {
+	const options: RuleOptions = context.options[0] || {};
+
+	return options;
+}
+
 module.exports = {
 	meta: {
 		type: 'suggestion',
@@ -496,6 +510,9 @@ module.exports = {
 					},
 					newlinesBetween: {
 						enum: newLinesBetweenOptions,
+					},
+					unassignedImports: {
+						enum: unassignedImportsOption,
 					},
 					alphabetize: {
 						type: 'object',
@@ -517,7 +534,7 @@ module.exports = {
 	},
 
 	create: function importOrderRule(context) {
-		const options: RuleOptions = context.options[0] || {};
+		const options = getOptions(context);
 		const newlinesBetweenImports: NewLinesBetweenOption = options.newlinesBetween || 'ignore';
 
 		let alphabetize: AlphabetizeConfig;
@@ -544,14 +561,15 @@ module.exports = {
 
 		return {
 			ImportDeclaration: function handleImports(node) {
-				if (node.specifiers.length) {
+				if (isAllowedImportModule(node, context)) {
 					// Ignoring unassigned imports
 					const name: string = node.source.value;
 					registerNode(node, name, 'import', ranks, regExpGroups, imported);
 				}
 			},
 			CallExpression: function handleRequires(node) {
-				if (level !== 0 || !isStaticRequire(node) || !isInVariableDeclarator(node.parent)) {
+				const isUnassignedRequire = !isInVariableDeclarator(node.parent);
+				if (level !== 0 || !isStaticRequire(node) || (!isUnassignedImportsAllowed(context) && isUnassignedRequire)) {
 					return;
 				}
 				const name: string = node.arguments[0].value;

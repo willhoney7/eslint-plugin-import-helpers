@@ -116,6 +116,15 @@ ruleTester.run('order', rule, {
         import path from 'path';
     `,
 		}),
+		// Consider unassigned values when option is provided (import)
+		test({
+		    code: `
+	import 'fs';
+	import path from 'path';
+	import './foo';
+    `,
+		    options: [{ unassignedImports: 'allow' }],
+		},),
 		// No imports
 		test({
 			code: `
@@ -1484,6 +1493,26 @@ comment3 */", // the spacing here is really sensitive
 			errors: [
 				{
 					message: '`Baz` import should occur before import of `bar`',
+				},
+			],
+		}),
+		// Option unassignedImports: 'allow' should consider unassigned module imports
+		test({
+			code: `
+			import './foo';
+			import 'fs';
+			import path from 'path';
+		      `,
+			output: `
+			import 'fs';
+			import path from 'path';
+			import './foo';
+		      `,
+			options: [{ unassignedImports: 'allow' }],
+			errors: [
+				{
+					line: 2,
+					message: '`./foo` import should occur after import of `path`',
 				},
 			],
 		}),
