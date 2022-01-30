@@ -6,7 +6,7 @@
 	"scripts": {
 		"build": "gulp src",
 		"lint": "npm run lint:js",
-		"lint:js": "eslint .",
+		"lint:js": "eslint --cache .",
 		"prepublish": "npm run build",
 		"test": "npm run build && npm run test-quick",
 		"test-quick": "NODE_PATH=./lib nyc -s mocha -R dot --recursive test -t test-results"
