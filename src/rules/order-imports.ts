@@ -35,7 +35,7 @@ type Imported = { name: string; rank: number; node: NodeOrToken };
 
 function reverse(array: Imported[]) {
 	return array
-		.map(function(v) {
+		.map(function (v) {
 			return {
 				name: v.name,
 				rank: -v.rank,
@@ -102,7 +102,7 @@ function findOutOfOrder(imported) {
 		return [];
 	}
 	let maxSeenRankNode = imported[0];
-	return imported.filter(function(importedModule) {
+	return imported.filter(function (importedModule) {
 		const res = importedModule.rank < maxSeenRankNode.rank;
 		if (maxSeenRankNode.rank < importedModule.rank) {
 			maxSeenRankNode = importedModule;
@@ -121,7 +121,7 @@ function findRootNode(node) {
 
 function findEndOfLineWithComments(sourceCode, node) {
 	const tokensToEndOfLine = takeTokensAfterWhile(sourceCode, node, commentOnSameLineAs(node));
-	let endOfTokens =
+	const endOfTokens =
 		tokensToEndOfLine.length > 0 ? tokensToEndOfLine[tokensToEndOfLine.length - 1].range[1] : node.range[1];
 	let result = endOfTokens;
 	for (let i = endOfTokens; i < sourceCode.text.length; i++) {
@@ -146,7 +146,7 @@ function commentOnSameLineAs(node): (token: NodeOrToken) => boolean {
 
 function findStartOfLineWithComments(sourceCode, node) {
 	const tokensToEndOfLine = takeTokensBeforeWhile(sourceCode, node, commentOnSameLineAs(node));
-	let startOfTokens = tokensToEndOfLine.length > 0 ? tokensToEndOfLine[0].range[0] : node.range[0];
+	const startOfTokens = tokensToEndOfLine.length > 0 ? tokensToEndOfLine[0].range[0] : node.range[0];
 	let result = startOfTokens;
 	for (let i = startOfTokens - 1; i > 0; i--) {
 		if (sourceCode.text[i] !== ' ' && sourceCode.text[i] !== '\t') {
@@ -192,7 +192,7 @@ function canReorderItems(firstNode: NodeOrToken, secondNode: NodeOrToken): boole
 	const firstIndex = parent.body.indexOf(firstNode);
 	const secondIndex = parent.body.indexOf(secondNode);
 	const nodesBetween = parent.body.slice(firstIndex, secondIndex + 1);
-	for (var nodeBetween of nodesBetween) {
+	for (const nodeBetween of nodesBetween) {
 		if (!canCrossNodeWhileReorder(nodeBetween)) {
 			return false;
 		}
@@ -247,7 +247,7 @@ function fixOutOfOrder(context, firstNode: NodeOrToken, secondNode: NodeOrToken,
 }
 
 function reportOutOfOrder(context, imported: Imported[], outOfOrder, order: 'before' | 'after'): void {
-	outOfOrder.forEach(function(imp) {
+	outOfOrder.forEach(function (imp) {
 		const found = imported.find(function hasHigherRank(importedItem) {
 			return importedItem.rank > imp.rank;
 		});
@@ -271,7 +271,7 @@ function makeOutOfOrderReport(context, imported: Imported[]) {
 }
 
 function mutateRanksToAlphabetize(imported, order, ignoreCase) {
-	const groupedByRanks = imported.reduce(function(acc, importedItem) {
+	const groupedByRanks = imported.reduce(function (acc, importedItem) {
 		acc[importedItem.rank] = acc[importedItem.rank] || [];
 		acc[importedItem.rank].push(importedItem.name);
 		return acc;
@@ -280,8 +280,8 @@ function mutateRanksToAlphabetize(imported, order, ignoreCase) {
 	const groupRanks = Object.keys(groupedByRanks);
 
 	// sort imports locally within their group
-	groupRanks.forEach(function(groupRank) {
-		groupedByRanks[groupRank].sort(function(importA, importB) {
+	groupRanks.forEach(function (groupRank) {
+		groupedByRanks[groupRank].sort(function (importA, importB) {
 			return ignoreCase ? importA.localeCompare(importB) : importA < importB ? -1 : importA === importB ? 0 : 1;
 		});
 
@@ -291,15 +291,15 @@ function mutateRanksToAlphabetize(imported, order, ignoreCase) {
 	});
 
 	// add decimal ranking to sort within the group
-	const alphabetizedRanks = groupRanks.sort().reduce(function(acc, groupRank) {
-		groupedByRanks[groupRank].forEach(function(importedItemName, index) {
+	const alphabetizedRanks = groupRanks.sort().reduce(function (acc, groupRank) {
+		groupedByRanks[groupRank].forEach(function (importedItemName, index) {
 			acc[importedItemName] = +groupRank + index / MAX_GROUP_SIZE;
 		});
 		return acc;
 	}, {});
 
 	// mutate the original group-rank with alphabetized-rank
-	imported.forEach(function(importedItem) {
+	imported.forEach(function (importedItem) {
 		importedItem.rank = alphabetizedRanks[importedItem.name];
 	});
 }
@@ -333,9 +333,9 @@ const knownTypes: KnownImportType[] = ['absolute', 'module', 'parent', 'sibling'
 // Example: { index: 0, sibling: 1, parent: 1, module: 2 }
 // Will throw an error if it: contains a type that does not exist in the list, does not start and end with '/', or has a duplicate
 function convertGroupsToRanks(groups: Groups): Ranks {
-	const rankObject = groups.reduce(function(res, group, index) {
+	const rankObject = groups.reduce(function (res, group, index) {
 		if (typeof group === 'string') group = [group]; // wrap them all in arrays
-		group.forEach(function(groupItem: ValidImportType) {
+		group.forEach(function (groupItem: ValidImportType) {
 			if (!isRegularExpressionGroup(groupItem) && knownTypes.indexOf(groupItem as KnownImportType) === -1) {
 				throw new Error(
 					`Incorrect configuration of the rule: Unknown type ${JSON.stringify(
@@ -351,11 +351,11 @@ function convertGroupsToRanks(groups: Groups): Ranks {
 		return res;
 	}, {});
 
-	const omittedTypes = knownTypes.filter(function(type) {
+	const omittedTypes = knownTypes.filter(function (type) {
 		return rankObject[type] === undefined;
 	});
 
-	return omittedTypes.reduce(function(res, type) {
+	return omittedTypes.reduce(function (res, type) {
 		res[type] = groups.length;
 		return res;
 	}, rankObject);
@@ -400,7 +400,7 @@ function makeNewlinesBetweenReport(
 	};
 	let previousImport = imported[0];
 
-	imported.slice(1).forEach(function(currentImport) {
+	imported.slice(1).forEach(function (currentImport) {
 		const emptyLinesBetween: number = getNumberOfEmptyLinesBetween(currentImport, previousImport);
 
 		const currentGroupRank = Math.floor(currentImport.rank); // each group rank is a whole number, within a group, decimals indicate subranking. yeah, not great.
@@ -479,7 +479,7 @@ function getAlphabetizeConfig(options: RuleOptions): AlphabetizeConfig {
 	return { order, ignoreCase };
 }
 
-module.exports = {
+export default {
 	meta: {
 		type: 'suggestion',
 		docs: {
@@ -531,8 +531,8 @@ module.exports = {
 		} catch (error) {
 			// Malformed configuration
 			return {
-				Program: function(node) {
-					context.report(node, error.message);
+				Program: function (node) {
+					context.report({ node, message: error.message });
 				},
 			};
 		}
