@@ -10,8 +10,11 @@ gulp.task('clean', function (done) {
 	rimraf(DEST, done);
 });
 
-gulp.task('src', ['clean'], function () {
-	return gulp.src(SRC).pipe(tsProject()).pipe(gulp.dest(DEST));
-});
+gulp.task(
+	'src',
+	gulp.series('clean', function () {
+		return gulp.src(SRC).pipe(tsProject()).pipe(gulp.dest(DEST));
+	})
+);
 
-gulp.task('prepublish', ['src']);
+gulp.task('prepublish', gulp.series('src'));

@@ -89,13 +89,12 @@ To use this plugin with TypeScript, you must use the TypeScript parser for ESLin
 # Working with This Repo
 
 ## Dependencies
-| Name                                                          | Version |
-| ------------------------------------------------------------- | ------- |
-| [node.js](https://nodejs.org)                                 | 10.x    |
-| [yarn](https://classic.yarnpkg.com/) | 1.x     |
 
-Gulp v3 is the thing keeping us at node.js v10
+| Name                          | Version |
+| ----------------------------- | ------- |
+| [node.js](https://nodejs.org) | 16.x    |
 
 ## Running Tests
-First, `yarn install`
-Then, `yarn test`
+
+First, `npm install`
+Then, `npm test`
