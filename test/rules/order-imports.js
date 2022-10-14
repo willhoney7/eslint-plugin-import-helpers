@@ -19,8 +19,8 @@ function generateImports(count) {
 
 ruleTester.run('order', rule, {
 	valid: [
-		// Default order using require
 		test({
+			name: 'Default order using require',
 			code: `
 				var async = require('async');
         var fs = require('fs');
@@ -30,8 +30,8 @@ ruleTester.run('order', rule, {
         var sibling = require('./foo');
         var index = require('./');`,
 		}),
-		// Default order using import
 		test({
+			name: 'Default order using import',
 			code: `
 		import abs from '/absolute-path';
 		import async, {foo1} from 'async';
@@ -42,8 +42,8 @@ ruleTester.run('order', rule, {
         import sibling, {foo3} from './foo';
         import index from './';`,
 		}),
-		// Multiple module of the same rank next to each other
 		test({
+			name: 'Multiple module of the same rank next to each other',
 			code: `
 			var async = require('async');
         var fs = require('fs');
@@ -52,8 +52,8 @@ ruleTester.run('order', rule, {
         var _ = require('lodash');
 				`,
 		}),
-		// Overriding order to be the reverse of the default order
 		test({
+			name: 'Overriding order to be the reverse of the default order',
 			code: `
         var index = require('./');
         var sibling = require('./foo');
@@ -65,23 +65,23 @@ ruleTester.run('order', rule, {
       `,
 			options: [{ groups: ['index', 'sibling', 'parent', 'module'] }],
 		}),
-		// Ignore dynamic requires
 		test({
+			name: 'Ignore dynamic requires',
 			code: `
 				var async = require('async');
         var path = require('path');
         var _ = require('lodash');
         var fs = require('f' + 's');`,
 		}),
-		// Ignore non-require call expressions
 		test({
+			name: 'Ignore non-require call expressions',
 			code: `
         var path = require('path');
         var result = add(1, 2);
         var _ = require('lodash');`,
 		}),
-		// Ignore requires that are not at the top-level
 		test({
+			name: 'Ignore requires that are not at the top-level',
 			code: `
         var index = require('./');
         function foo() {
@@ -92,32 +92,32 @@ ruleTester.run('order', rule, {
           require('fs');
         }`,
 		}),
-		// Ignore unknown/invalid cases
 		test({
+			name: 'Ignore unknown/invalid cases',
 			code: `
 				var async = require('async');
 				var fs = require('fs');
         var unknown1 = require(/unknown1/);
     `,
 		}),
-		// Ignoring unassigned values by default (require)
 		test({
+			name: 'Ignoring unassigned values by default (require)',
 			code: `
         require('./foo');
         require('fs');
         var path = require('path');
     `,
 		}),
-		// Ignoring unassigned values by default (import)
 		test({
+			name: 'Ignoring unassigned values by default (import)',
 			code: `
         import './foo';
         import 'fs';
         import path from 'path';
     `,
 		}),
-		// No imports
 		test({
+			name: 'No imports',
 			code: `
         function add(a, b) {
           return a + b;
@@ -125,8 +125,8 @@ ruleTester.run('order', rule, {
         var foo;
     `,
 		}),
-		// Grouping import types
 		test({
+			name: 'Grouping import types',
 			code: `
 				var async = require('async');
         var fs = require('fs');
@@ -146,8 +146,8 @@ ruleTester.run('order', rule, {
 				},
 			],
 		}),
-		// Omitted types should implicitly be considered as the last type
 		test({
+			name: 'Omitted types should implicitly be considered as the last type',
 			code: `
         var index = require('./');
         var path = require('path');
@@ -162,8 +162,8 @@ ruleTester.run('order', rule, {
 				},
 			],
 		}),
-		// Mixing require and import should have import up top
 		test({
+			name: 'Mixing require and import should have import up top',
 			code: `
         import async, {foo1} from 'async';
         import relParent2, {foo2} from '../foo/bar';
@@ -174,8 +174,8 @@ ruleTester.run('order', rule, {
         var index = require('./');
       `,
 		}),
-		// Option: newlinesBetween: 'always'
 		test({
+			name: "Option: newlinesBetween: 'always'",
 			code: `
         var fs = require('fs');
         var async = require('async');
@@ -197,8 +197,8 @@ ruleTester.run('order', rule, {
 				},
 			],
 		}),
-		// Option: newlinesBetween: 'never'
 		test({
+			name: "Option: newlinesBetween: 'never'",
 			code: `
 				var async = require('async');
         var fs = require('fs');
@@ -215,8 +215,8 @@ ruleTester.run('order', rule, {
 				},
 			],
 		}),
-		// Option: newlinesBetween: 'ignore'
 		test({
+			name: "Option: newlinesBetween: 'ignore'",
 			code: `
       var fs = require('fs');
       var async = require('async');
@@ -237,8 +237,8 @@ ruleTester.run('order', rule, {
 				},
 			],
 		}),
-		// 'ignore' should be the default value for `newlinesBetween`
 		test({
+			name: "'ignore' should be the default value for `newlinesBetween`",
 			code: `
 			var fs = require('fs');
 
@@ -260,8 +260,8 @@ ruleTester.run('order', rule, {
 				},
 			],
 		}),
-		// Option newlinesBetween: 'always' with multiline imports #1
 		test({
+			name: "Option newlinesBetween: 'always' with multiline imports #1",
 			code: `
         import path from 'path';
         import {
@@ -275,8 +275,8 @@ ruleTester.run('order', rule, {
       `,
 			options: [{ newlinesBetween: 'always' }],
 		}),
-		// Option newlinesBetween: 'always' with multiline imports #2
 		test({
+			name: "Option newlinesBetween: 'always' with multiline imports #2",
 			code: `
         import path from 'path';
         import net
@@ -287,8 +287,8 @@ ruleTester.run('order', rule, {
       `,
 			options: [{ newlinesBetween: 'always' }],
 		}),
-		// Option newlinesBetween: 'always' with multiline imports #3
 		test({
+			name: "Option newlinesBetween: 'always' with multiline imports #3",
 			code: `
         import foo
           from '../../../../this/will/be/very/long/path/and/therefore/this/import/has/to/be/in/two/lines';
@@ -298,8 +298,8 @@ ruleTester.run('order', rule, {
       `,
 			options: [{ newlinesBetween: 'always' }],
 		}),
-		// Option newlinesBetween: 'always' with not assigned import #1
 		test({
+			name: "Option newlinesBetween: 'always' with not assigned import #1",
 			code: `
         import path from 'path';
 
@@ -310,8 +310,8 @@ ruleTester.run('order', rule, {
       `,
 			options: [{ newlinesBetween: 'always' }],
 		}),
-		// Option newlinesBetween: 'never' with not assigned import #2
 		test({
+			name: "Option newlinesBetween: 'never' with not assigned import #2",
 			code: `
         import path from 'path';
         import 'loud-rejection';
@@ -320,8 +320,8 @@ ruleTester.run('order', rule, {
       `,
 			options: [{ newlinesBetween: 'never' }],
 		}),
-		// Option newlinesBetween: 'always' with not assigned require #1
 		test({
+			name: "Option newlinesBetween: 'always' with not assigned require #1",
 			code: `
         var path = require('path');
 
@@ -332,8 +332,8 @@ ruleTester.run('order', rule, {
       `,
 			options: [{ newlinesBetween: 'always' }],
 		}),
-		// Option newlinesBetween: 'never' with not assigned require #2
 		test({
+			name: "Option newlinesBetween: 'never' with not assigned require #2",
 			code: `
         var path = require('path');
         require('loud-rejection');
@@ -342,8 +342,8 @@ ruleTester.run('order', rule, {
       `,
 			options: [{ newlinesBetween: 'never' }],
 		}),
-		// Option newlinesBetween: 'never' should ignore nested require statement's #1
 		test({
+			name: "Option newlinesBetween: 'never' should ignore nested require statement's #1",
 			code: `
         var some = require('asdas');
         var config = {
@@ -359,8 +359,8 @@ ruleTester.run('order', rule, {
       `,
 			options: [{ newlinesBetween: 'never' }],
 		}),
-		// Option newlinesBetween: 'always' should ignore nested require statement's #2
 		test({
+			name: "Option newlinesBetween: 'always' should ignore nested require statement's #2",
 			code: `
         var some = require('asdas');
         var config = {
@@ -376,8 +376,8 @@ ruleTester.run('order', rule, {
 			options: [{ newlinesBetween: 'always' }],
 		}),
 		// Option: newlinesBetween: 'always-and-inside-groups'
-		// should have at least one new line between each import statement
 		test({
+			name: 'should have at least one new line between each import statement',
 			code: `
 				var fs = require('fs');
 
@@ -407,8 +407,8 @@ ruleTester.run('order', rule, {
 				},
 			],
 		}),
-		// Option alphabetize: {order: 'ignore'}
 		test({
+			name: "Option alphabetize: {order: 'ignore'}",
 			code: `
         import foo from 'foo';
         import bar from 'bar';
@@ -422,8 +422,8 @@ ruleTester.run('order', rule, {
 				},
 			],
 		}),
-		// Option alphabetize: {order: 'asc', ignoreCase: false}
 		test({
+			name: "Option alphabetize: {order: 'asc', ignoreCase: false}",
 			code: `
         import Baz from 'Baz';
         import bar from 'bar';
@@ -438,8 +438,8 @@ ruleTester.run('order', rule, {
 				},
 			],
 		}),
-		// Option alphabetize: {order: 'asc', ignoreCase: true}
 		test({
+			name: "Option alphabetize: {order: 'asc', ignoreCase: true}",
 			code: `
         import bar from 'bar';
         import Baz from 'Baz';
@@ -454,8 +454,8 @@ ruleTester.run('order', rule, {
 				},
 			],
 		}),
-		// Option alphabetize: {order: 'desc', ignoreCase: false}
 		test({
+			name: "Option alphabetize: {order: 'desc', ignoreCase: false}",
 			code: `
         import foo from 'foo';
         import bar from 'bar';
@@ -470,8 +470,8 @@ ruleTester.run('order', rule, {
 				},
 			],
 		}),
-		// Option alphabetize: {order: 'desc', ignoreCase: true}
 		test({
+			name: "Option alphabetize: {order: 'desc', ignoreCase: true}",
 			code: `
         import foo from 'foo';
         import Baz from 'Baz';
@@ -486,8 +486,8 @@ ruleTester.run('order', rule, {
 				},
 			],
 		}),
-		// With large number of imports in the same group to ensure no newlines are inserted into group.
 		test({
+			name: 'With large number of imports in the same group to ensure no newlines are inserted into group.',
 			code: generateImports(150),
 			options: [
 				{
@@ -498,9 +498,8 @@ ruleTester.run('order', rule, {
 		}),
 	],
 	invalid: [
-		// Option: newlinesBetween: 'always-and-inside-groups'
-		// should have at least one new line between each import statement
 		test({
+			name: "Option: newlinesBetween: 'always-and-inside-groups' should have at least one new line between each import statement",
 			code: `
 				var fs = require('fs');
 
@@ -537,8 +536,8 @@ ruleTester.run('order', rule, {
 				},
 			],
 		}),
-		// fix order with spaces on the end of line
 		test({
+			name: 'fix order with spaces on the end of line',
 			code: `
 		        var parent = require('../parent');
 		        var fs = require('fs');${' '}
@@ -553,8 +552,8 @@ ruleTester.run('order', rule, {
 				},
 			],
 		}),
-		// fix order with comment on the end of line
 		test({
+			name: 'fix order with comment on the end of line',
 			code: `
 		        var parent = require('../parent');
 		        var fs = require('fs'); /* comment */
@@ -569,8 +568,8 @@ ruleTester.run('order', rule, {
 				},
 			],
 		}),
-		// fix order with comments at the end and start of line
 		test({
+			name: 'fix order with comments at the end and start of line',
 			code: `
 		        /* comment1 */  var parent = require('../parent'); /* comment2 */
 		        /* comment3 */  var fs = require('fs'); /* comment4 */
@@ -585,8 +584,8 @@ ruleTester.run('order', rule, {
 				},
 			],
 		}),
-		// fix order with few comments at the end and start of line
 		test({
+			name: 'fix order with few comments at the end and start of line',
 			code: `
 		        /* comment0 */  /* comment1 */  var parent = require('../parent'); /* comment2 */
 		        /* comment3 */  var fs = require('fs'); /* comment4 */
@@ -601,8 +600,8 @@ ruleTester.run('order', rule, {
 				},
 			],
 		}),
-		// fix order with windows end of lines
 		test({
+			name: 'fix order with windows end of lines',
 			code:
 				`/* comment0 */  /* comment1 */  var parent = require('../parent'); /* comment2 */` +
 				`\r\n` +
@@ -619,8 +618,8 @@ ruleTester.run('order', rule, {
 				},
 			],
 		}),
-		// fix order with multilines comments at the end and start of line
 		test({
+			name: 'fix order with multilines comments at the end and start of line',
 			code: "/* multiline1\n\
 comment1 */var parent = require('../parent'); /* multiline2\n\
 comment2 */  var fs = require('fs');/* multiline3\n\
@@ -636,8 +635,8 @@ comment3 */", // the spacing here is really sensitive
 				},
 			],
 		}),
-		// fix order of multiple import
 		test({
+			name: 'fix order of multiple import',
 			code: `
 		        var parent = require('../parent');
 		        var fs =
@@ -654,8 +653,8 @@ comment3 */", // the spacing here is really sensitive
 				},
 			],
 		}),
-		// fix order at the end of file
 		test({
+			name: 'fix order at the end of file',
 			code: `
 		        var parent = require('../parent');
 		        var fs = require('fs');`,
@@ -669,8 +668,8 @@ comment3 */", // the spacing here is really sensitive
 				},
 			],
 		}),
-		// module before parent module (import)
 		test({
+			name: 'module before parent module (import)',
 			code: `
 		        import parent from '../parent';
 		        import fs from 'fs';
@@ -685,8 +684,8 @@ comment3 */", // the spacing here is really sensitive
 				},
 			],
 		}),
-		// module before parent (mixed import and require)
 		test({
+			name: 'module before parent (mixed import and require)',
 			code: `
 		        var parent = require('../parent');
 		        import fs from 'fs';
@@ -701,8 +700,8 @@ comment3 */", // the spacing here is really sensitive
 				},
 			],
 		}),
-		// parent before sibling
 		test({
+			name: 'parent before sibling',
 			code: `
 		    var sibling = require('./sibling');
 		    var parent = require('../parent');
@@ -717,8 +716,8 @@ comment3 */", // the spacing here is really sensitive
 				},
 			],
 		}),
-		// sibling before index
 		test({
+			name: 'sibling before index',
 			code: `
 		    var index = require('./');
 		    var sibling = require('./sibling');
@@ -733,8 +732,8 @@ comment3 */", // the spacing here is really sensitive
 				},
 			],
 		}),
-		// // Uses 'after' wording if it creates less errors
 		test({
+			name: "Uses 'after' wording if it creates less errors",
 			code: `
 		    var index = require('./');
 		    var fs = require('fs');
@@ -757,8 +756,8 @@ comment3 */", // the spacing here is really sensitive
 				},
 			],
 		}),
-		// Overriding order to be the reverse of the default order
 		test({
+			name: 'Overriding order to be the reverse of the default order',
 			code: `
 		    var fs = require('fs');
 		    var index = require('./');
@@ -834,8 +833,8 @@ comment3 */", // the spacing here is really sensitive
 				],
 			})
 		),
-		// // Grouping import types
 		test({
+			name: '// Grouping import types',
 			code: `
 		    var fs = require('fs');
 		    var index = require('./');
@@ -862,8 +861,8 @@ comment3 */", // the spacing here is really sensitive
 				},
 			],
 		}),
-		// // Omitted types should implicitly be considered as the last type
 		test({
+			name: 'Omitted types should implicitly be considered as the last type',
 			code: `
 				var path = require('path');
 				var parent = require('../parent');
@@ -889,9 +888,8 @@ comment3 */", // the spacing here is really sensitive
 				},
 			],
 		}),
-		// 		// Setting the order for an unknown type
-		// 		// should make the rule trigger an error and do nothing else
 		test({
+			name: 'Setting the order for an unknown type should make the rule trigger an error and do nothing else',
 			code: `
 		        var async = require('async');
 		        var index = require('./');
@@ -904,8 +902,8 @@ comment3 */", // the spacing here is really sensitive
 				},
 			],
 		}),
-		// 		// Type in an array can't be another array, too much nesting
 		test({
+			name: "Type in an array can't be another array, too much nesting",
 			code: `
 		        var async = require('async');
 		        var index = require('./');
@@ -918,8 +916,8 @@ comment3 */", // the spacing here is really sensitive
 				},
 			],
 		}),
-		// 		// No numbers
 		test({
+			name: '		// No numbers',
 			code: `
 		        var async = require('async');
 		        var index = require('./');
@@ -932,8 +930,8 @@ comment3 */", // the spacing here is really sensitive
 				},
 			],
 		}),
-		// 		// Duplicate
 		test({
+			name: '		// Duplicate',
 			code: `
 		        var async = require('async');
 		        var index = require('./');
@@ -945,8 +943,8 @@ comment3 */", // the spacing here is really sensitive
 				},
 			],
 		}),
-		// 		// Mixing require and import should have import up top
 		test({
+			name: '		// Mixing require and import should have import up top',
 			code: `
 		        import async, {foo1} from 'async';
 		        import relParent2, {foo2} from '../foo/bar';
@@ -988,8 +986,8 @@ comment3 */", // the spacing here is really sensitive
 				},
 			],
 		}),
-		// 		// Option newlinesBetween: 'never' - should report unnecessary line between groups
 		test({
+			name: "Option newlinesBetween: 'never' - should report unnecessary line between groups",
 			code: `
 						var fs = require('fs');
 						var index = require('./');
@@ -1027,8 +1025,8 @@ comment3 */", // the spacing here is really sensitive
 				},
 			],
 		}),
-		// Fix newlinesBetween with comments after
 		test({
+			name: 'Fix newlinesBetween with comments after',
 			code: `
 				var fs = require('fs'); /* comment */
 
@@ -1049,8 +1047,8 @@ comment3 */", // the spacing here is really sensitive
 				},
 			],
 		}),
-		// Cannot fix newlinesBetween with multiline comment after
 		test({
+			name: 'Cannot fix newlinesBetween with multiline comment after',
 			code: `
 		        var fs = require('fs'); /* multiline
 				comment */
@@ -1076,8 +1074,8 @@ comment3 */", // the spacing here is really sensitive
 				},
 			],
 		}),
-		// Option newlinesBetween: 'always' - should report lack of newline between groups
 		test({
+			name: "Option newlinesBetween: 'always' - should report lack of newline between groups",
 			code: `
 				var fs = require('fs');
 				var index = require('./');
@@ -1111,8 +1109,8 @@ comment3 */", // the spacing here is really sensitive
 				},
 			],
 		}),
-		// Option newlinesBetween: 'always' should report unnecessary empty lines space between import groups
 		test({
+			name: "Option newlinesBetween: 'always' should report unnecessary empty lines space between import groups",
 			code: `
 				var fs = require('fs');
 
@@ -1144,8 +1142,8 @@ comment3 */", // the spacing here is really sensitive
 				},
 			],
 		}),
-		// Option newlinesBetween: 'never' cannot fix if there are other statements between imports
 		test({
+			name: "Option newlinesBetween: 'never' cannot fix if there are other statements between imports",
 			code: `
 		        import path from 'path';
 				import 'loud-rejection';
@@ -1168,8 +1166,8 @@ comment3 */", // the spacing here is really sensitive
 				},
 			],
 		}),
-		// Option newlinesBetween: 'always' should report missing empty lines when using not assigned imports
 		test({
+			name: "Option newlinesBetween: 'always' should report missing empty lines when using not assigned imports",
 			code: `
 				import path from 'path';
 				import 'loud-rejection';
@@ -1191,8 +1189,8 @@ comment3 */", // the spacing here is really sensitive
 				},
 			],
 		}),
-		// fix missing empty lines with single line comment after
 		test({
+			name: 'fix missing empty lines with single line comment after',
 			code: `
 				import path from 'path'; // comment
 				import _ from './relative';
@@ -1210,8 +1208,8 @@ comment3 */", // the spacing here is really sensitive
 				},
 			],
 		}),
-		// fix missing empty lines with few line block comment after
 		test({
+			name: 'fix missing empty lines with few line block comment after',
 			code: `
 				import path from 'path'; /* comment */ /* comment */
 				import _ from './relative';
@@ -1229,27 +1227,30 @@ comment3 */", // the spacing here is really sensitive
 				},
 			],
 		}),
-		// fix missing empty lines with single line block comment after
-		test({
-			code: `
+		test(
+			{
+				name: 'fix missing empty lines with single line block comment after',
+				code: `
 				import path from 'path'; /* 1
 				2 */
 				import _ from './relative';
 		      `,
-			output: `
+				output: `
 				import path from 'path';
  /* 1
 				2 */
 				import _ from './relative';
 		      `,
-			options: [{ newlinesBetween: 'always' }],
-			errors: [
-				{
-					line: 2,
-					message: 'There should be at least one empty line between import groups',
-				},
-			],
-		}),
+				options: [{ newlinesBetween: 'always' }],
+				errors: [
+					{
+						line: 2,
+						message: 'There should be at least one empty line between import groups',
+					},
+				],
+			},
+			{ noTrim: true }
+		),
 		// reorder fix cannot cross non import or require
 		test(
 			withoutAutofixOutput({
@@ -1383,8 +1384,8 @@ comment3 */", // the spacing here is really sensitive
 				],
 			})
 		),
-		// fix incorrect order with @typescript-eslint/parser
 		test({
+			name: 'fix incorrect order with @typescript-eslint/parser',
 			code: `
 		        var relative = require('./relative');
 		        var fs = require('fs');
@@ -1400,8 +1401,8 @@ comment3 */", // the spacing here is really sensitive
 				},
 			],
 		}),
-		// Option alphabetize: {order: 'asc', ignoreCase: false}
 		test({
+			name: "Option alphabetize: {order: 'asc', ignoreCase: false}",
 			code: `
 		        import bar from 'bar';
 		        import Baz from 'Baz';
@@ -1426,8 +1427,8 @@ comment3 */", // the spacing here is really sensitive
 				},
 			],
 		}),
-		// Option alphabetize: {order: 'asc', ignoreCase: true}
 		test({
+			name: "Option alphabetize: {order: 'asc', ignoreCase: true}",
 			code: `
 		        import Baz from 'Baz';
 		        import bar from 'bar';
@@ -1452,8 +1453,8 @@ comment3 */", // the spacing here is really sensitive
 				},
 			],
 		}),
-		// Option alphabetize: {order: 'desc', ignoreCase: false}
 		test({
+			name: "Option alphabetize: {order: 'desc', ignoreCase: false}",
 			code: `
 		        import foo from 'foo';
 		        import Baz from 'Baz';
@@ -1478,8 +1479,8 @@ comment3 */", // the spacing here is really sensitive
 				},
 			],
 		}),
-		// Option alphabetize: {order: 'desc', ignoreCase: true}
 		test({
+			name: "Option alphabetize: {order: 'desc', ignoreCase: true}",
 			code: `
 		        import foo from 'foo';
 		        import bar from 'bar';

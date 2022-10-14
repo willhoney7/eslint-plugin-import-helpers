@@ -4,6 +4,7 @@ import {
 	ValidImportType,
 	KnownImportType,
 	RegExpGroups,
+	ImportKind,
 } from '../util/import-type';
 import { isStaticRequire } from '../util/static-require';
 
@@ -312,12 +313,30 @@ function getRegExpGroups(ranks: Ranks): RegExpGroups {
 
 // DETECTING
 
-function computeRank(ranks: Ranks, regExpGroups, name: string, type: ImportType): number {
-	return ranks[determineImportType(name, regExpGroups)] + (type === 'import' ? 0 : MAX_GROUP_SIZE);
+function computeRank(
+	ranks: Ranks,
+	regExpGroups,
+	name: string,
+	type: ImportType,
+	importKind: ImportKind,
+	treatTypesAsGroup: boolean
+): number {
+	return (
+		ranks[determineImportType({ name, regExpGroups, importKind, treatTypesAsGroup })] +
+		(type === 'import' ? 0 : MAX_GROUP_SIZE)
+	);
 }
 
-function registerNode(node: NodeOrToken, name: string, type: ImportType, ranks, regExpGroups, imported: Imported[]) {
-	const rank = computeRank(ranks, regExpGroups, name, type);
+function registerNode(
+	node: NodeOrToken,
+	name: string,
+	type: ImportType,
+	ranks,
+	regExpGroups,
+	imported: Imported[],
+	treatTypesAsGroup: boolean
+) {
+	const rank = computeRank(ranks, regExpGroups, name, type, node.importKind || 'value', treatTypesAsGroup);
 	if (rank !== -1) {
 		imported.push({ name, rank, node });
 	}
@@ -327,7 +346,7 @@ function isInVariableDeclarator(node: NodeOrToken): boolean {
 	return node && (node.type === 'VariableDeclarator' || isInVariableDeclarator(node.parent));
 }
 
-const knownTypes: KnownImportType[] = ['absolute', 'module', 'parent', 'sibling', 'index'];
+const knownTypes: KnownImportType[] = ['absolute', 'module', 'parent', 'sibling', 'index', 'type'];
 
 // Creates an object with type-rank pairs.
 // Example: { index: 0, sibling: 1, parent: 1, module: 2 }
@@ -519,6 +538,8 @@ export default {
 	create: function importOrderRule(context) {
 		const options: RuleOptions = context.options[0] || {};
 		const newlinesBetweenImports: NewLinesBetweenOption = options.newlinesBetween || 'ignore';
+		const groups = options.groups || defaultGroups;
+		const treatTypesAsGroup = groups.includes('type');
 
 		let alphabetize: AlphabetizeConfig;
 		let ranks: Ranks;
@@ -526,7 +547,7 @@ export default {
 
 		try {
 			alphabetize = getAlphabetizeConfig(options);
-			ranks = convertGroupsToRanks(options.groups || defaultGroups);
+			ranks = convertGroupsToRanks(groups);
 			regExpGroups = getRegExpGroups(ranks);
 		} catch (error) {
 			// Malformed configuration
@@ -547,7 +568,7 @@ export default {
 				if (node.specifiers.length) {
 					// Ignoring unassigned imports
 					const name: string = node.source.value;
-					registerNode(node, name, 'import', ranks, regExpGroups, imported);
+					registerNode(node, name, 'import', ranks, regExpGroups, imported, treatTypesAsGroup);
 				}
 			},
 			CallExpression: function handleRequires(node) {
@@ -555,7 +576,7 @@ export default {
 					return;
 				}
 				const name: string = node.arguments[0].value;
-				registerNode(node, name, 'require', ranks, regExpGroups, imported);
+				registerNode(node, name, 'require', ranks, regExpGroups, imported, treatTypesAsGroup);
 			},
 			'Program:exit': function reportAndReset() {
 				if (alphabetize.order !== 'ignore') {

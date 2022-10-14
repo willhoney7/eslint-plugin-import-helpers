@@ -18,7 +18,10 @@ module.exports = {
 			tryExtensions: ['.js', '.json', '.node', '.ts', '.d.ts'],
 		},
 	},
-	rules: {},
+	rules: {
+		'prettier/prettier': 0,
+		'eslint-plugin/prefer-message-ids': 1,
+	},
 	overrides: [
 		{
 			files: ['test/**/*.js'],
