@@ -61,13 +61,13 @@ This rule supports the following options:
 
 Groups dictates how the imports should be grouped and it what order. `groups` is an array. Each value in the array must be a valid string or an array of valid strings. The valid strings are:
 
--   `'module'` | `'absolute'` | `'parent'` | `'sibling'` | `'index'`
+-   `'module'` | `'absolute'` | `'parent'` | `'sibling'` | `'index'` | `'type'`
 -   or a regular expression like string, ex: `/^shared/`
     -   the wrapping `/` is essential
     -   in this example, it would match any import paths starting with `'shared'`
     -   note: files are first categorized as matching a regular expression group before going into another group
 
-The enforced order is the same as the order of each element in a group. Omitted types are implicitly grouped together as the last element. Example:
+The enforced order is the same as the order of each element in a group. Omitted groups are implicitly grouped together as the last element. Example:
 
 ```js
 [
@@ -86,6 +86,36 @@ You can set the options like this:
     "error",
     {"groups": [ 'module', '/^@shared/', ['parent', 'sibling', 'index'] ]}
 ]
+```
+
+#### The `type` group
+
+TypeScript has what are called type imports, e.g.,
+
+```ts
+import type { ImportantType } from './thing';
+```
+
+If you would like to treat these type imports as a completely separate group (instead of sorted according to the file it was imported from), add a `type` group to your `groups` list.
+
+With the `type` group:
+
+```ts
+/* eslint import-helpers/order-imports: ["error", {"groups": ['sibling', 'module', 'type']}] */
+import foo from './foo';
+import fs from 'fs';
+import path from 'path';
+import type { ImportantType } from './sibling';
+```
+
+Without the `type` group:
+
+```ts
+/* eslint import-helpers/order-imports: ["error", {"groups": ['sibling', 'module']}] */
+import foo from './foo';
+import type { ImportantType } from './sibling';
+import fs from 'fs';
+import path from 'path';
 ```
 
 ### `newlinesBetween: [ignore|always|always-and-inside-groups|never]`:

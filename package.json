@@ -9,7 +9,7 @@
 		"lint:js": "eslint --cache .",
 		"prepublish": "npm run build",
 		"test": "npm run build && npm run test-quick",
-		"test-quick": "NODE_PATH=./lib nyc -s mocha -R dot --recursive test -t test-results"
+		"test-quick": "cross-env NODE_PATH=./lib nyc -s mocha -R dot --recursive test -t test-results"
 	},
 	"keywords": [
 		"eslint",
@@ -24,6 +24,9 @@
 	},
 	"author": "Will Honey",
 	"license": "MIT",
+	"engines": {
+		"node": "> 14"
+	},
 	"peerDependencies": {
 		"eslint": "5.x - 8.x"
 	},
@@ -31,6 +34,7 @@
 		"@types/node": "^16.11.46",
 		"@typescript-eslint/eslint-plugin": "^5.31.0",
 		"@typescript-eslint/parser": "^5.31.0",
+		"cross-env": "^7.0.3",
 		"eslint": "^8.20.0",
 		"eslint-config-prettier": "^8.5.0",
 		"eslint-plugin-eslint-plugin": "^5.0.1",

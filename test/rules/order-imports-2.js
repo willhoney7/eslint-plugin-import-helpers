@@ -9,8 +9,8 @@ ruleTester.run('order', rule, {
 	valid: [
 		// Default order using import
 		// absolute at top
-		// modules starting with _ or @ are sorted with modules
 		test({
+			name: 'modules starting with _ or @ are sorted with modules',
 			code: `
 				import abs from '/absolute/module';
 
@@ -89,7 +89,7 @@ ruleTester.run('order', rule, {
 				import relParent2, {foo2} from '../foo/bar';
 
 				import index from './';
-
+				
 				import sibling, {foo3} from './foo';`,
 			options: [
 				{
@@ -99,10 +99,77 @@ ruleTester.run('order', rule, {
 				},
 			],
 		}),
+		// test out "types"
+		test({
+			name: 'type at end',
+			code: `
+				import sib from './sib';
+				import type { relative } from './relative';
+		      `,
+			parser: require.resolve('@typescript-eslint/parser'),
+			options: [{ groups: ['module', 'sibling', 'type'] }],
+		}),
+		test({
+			name: 'type at beginning',
+			code: `
+				import type { relative } from './relative';
+				import sib from './sib';
+		      `,
+			parser: require.resolve('@typescript-eslint/parser'),
+			options: [{ groups: ['type', 'module', 'sibling'] }],
+		}),
+		test({
+			name: "explicit no type group means don't treat types special, both of these pass (when alphabetization is ignored) 1",
+			code: `
+				import sib from './sib';
+				import type { relative } from './relative';
+		      `,
+			parser: require.resolve('@typescript-eslint/parser'),
+			options: [{ groups: ['module', 'sibling'] }],
+		}),
+		test({
+			name: "explicit no type group means don't treat types special, both of these pass (when alphabetization is ignored) 2",
+			code: `
+				import type { relative } from './relative';
+				import sib from './sib';
+		      `,
+			parser: require.resolve('@typescript-eslint/parser'),
+			options: [{ groups: ['module', 'sibling'] }],
+		}),
+		test({
+			name: "default groups don't have a type group and so types aren't special",
+			code: `
+				import sib from './sib';
+				import type { relative } from './relative';
+		      `,
+			parser: require.resolve('@typescript-eslint/parser'),
+		}),
+		test({
+			name: "default groups don't have a type group and so types aren't special",
+			code: `
+				import type { relative } from './relative';
+				import sib from './sib';
+		      `,
+			parser: require.resolve('@typescript-eslint/parser'),
+		}),
 	],
 	invalid: [
-		// Option alphabetize: {order: 'desc', ignoreCase: true}
 		test({
+			code: `
+				import type { relative } from './relative';
+				import sib from './sib';
+		      `,
+			output: `
+				import sib from './sib';
+				import type { relative } from './relative';
+		      `,
+			parser: require.resolve('@typescript-eslint/parser'),
+
+			options: [{ groups: ['module', 'sibling', 'type'] }],
+			errors: [{ message: '`./sib` import should occur before import of `./relative`' }],
+		}),
+		test({
+			name: "Option alphabetize: {order: 'desc', ignoreCase: true}",
 			code: `
 		    import foo from 'foo';
 		    import bar from 'bar';
@@ -127,9 +194,7 @@ ruleTester.run('order', rule, {
 				},
 			],
 		}),
-
 		// // Multiple errors
-
 		// TODO FAILING TEST
 		// test({
 		// 	code: `
