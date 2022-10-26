@@ -24,9 +24,6 @@
 	},
 	"author": "Will Honey",
 	"license": "MIT",
-	"engines": {
-		"node": "> 14"
-	},
 	"peerDependencies": {
 		"eslint": "5.x - 8.x"
 	},
