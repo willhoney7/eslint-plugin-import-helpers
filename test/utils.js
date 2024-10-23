@@ -11,12 +11,12 @@ function test(t, extraOptions = {}) {
 		filename: FILENAME,
 		...t,
 		code: extraOptions.noTrim ? t.code : trimWhitespaceForEachLine(t.code),
-		parserOptions: Object.assign(
+		languageOptions: Object.assign(
 			{
 				sourceType: 'module',
 				ecmaVersion: 6,
 			},
-			t.parserOptions
+			t.languageOptions
 		),
 	};
 

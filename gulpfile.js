@@ -7,7 +7,7 @@ const DEST = 'lib';
 const tsProject = ts.createProject('tsconfig.json');
 
 gulp.task('clean', function (done) {
-	rimraf(DEST, done);
+	rimraf.rimraf(DEST).then(() => done());
 });
 
 gulp.task(

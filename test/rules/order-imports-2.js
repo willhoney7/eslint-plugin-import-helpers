@@ -106,7 +106,9 @@ ruleTester.run('order', rule, {
 				import sib from './sib';
 				import type { relative } from './relative';
 		      `,
-			parser: require.resolve('@typescript-eslint/parser'),
+			languageOptions: {
+				parser: require('@typescript-eslint/parser'),
+			},
 			options: [{ groups: ['module', 'sibling', 'type'] }],
 		}),
 		test({
@@ -115,7 +117,9 @@ ruleTester.run('order', rule, {
 				import type { relative } from './relative';
 				import sib from './sib';
 		      `,
-			parser: require.resolve('@typescript-eslint/parser'),
+			languageOptions: {
+				parser: require('@typescript-eslint/parser'),
+			},
 			options: [{ groups: ['type', 'module', 'sibling'] }],
 		}),
 		test({
@@ -124,7 +128,9 @@ ruleTester.run('order', rule, {
 				import sib from './sib';
 				import type { relative } from './relative';
 		      `,
-			parser: require.resolve('@typescript-eslint/parser'),
+			languageOptions: {
+				parser: require('@typescript-eslint/parser'),
+			},
 			options: [{ groups: ['module', 'sibling'] }],
 		}),
 		test({
@@ -133,7 +139,9 @@ ruleTester.run('order', rule, {
 				import type { relative } from './relative';
 				import sib from './sib';
 		      `,
-			parser: require.resolve('@typescript-eslint/parser'),
+			languageOptions: {
+				parser: require('@typescript-eslint/parser'),
+			},
 			options: [{ groups: ['module', 'sibling'] }],
 		}),
 		test({
@@ -142,7 +150,9 @@ ruleTester.run('order', rule, {
 				import sib from './sib';
 				import type { relative } from './relative';
 		      `,
-			parser: require.resolve('@typescript-eslint/parser'),
+			languageOptions: {
+				parser: require('@typescript-eslint/parser'),
+			},
 		}),
 		test({
 			name: "default groups don't have a type group and so types aren't special",
@@ -150,7 +160,9 @@ ruleTester.run('order', rule, {
 				import type { relative } from './relative';
 				import sib from './sib';
 		      `,
-			parser: require.resolve('@typescript-eslint/parser'),
+			languageOptions: {
+				parser: require('@typescript-eslint/parser'),
+			},
 		}),
 	],
 	invalid: [
@@ -163,7 +175,9 @@ ruleTester.run('order', rule, {
 				import sib from './sib';
 				import type { relative } from './relative';
 		      `,
-			parser: require.resolve('@typescript-eslint/parser'),
+			languageOptions: {
+				parser: require('@typescript-eslint/parser'),
+			},
 
 			options: [{ groups: ['module', 'sibling', 'type'] }],
 			errors: [{ message: '`./sib` import should occur before import of `./relative`' }],
