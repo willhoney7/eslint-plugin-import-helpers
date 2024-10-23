@@ -37,7 +37,7 @@
 		"eslint-plugin-eslint-plugin": "^6.2.0",
 		"eslint-plugin-node": "^11.1.0",
 		"eslint-plugin-prettier": "^5.2.1",
-		"gulp": "^4.0.2",
+		"gulp": "^5.0.0",
 		"gulp-typescript": "^5.0.1",
 		"mocha": "^10.7.3",
 		"nyc": "^17.1.0",
