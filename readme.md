@@ -91,7 +91,7 @@ To add a rule, update your `.eslintrc.(yml|json|js)`:
 
 # ESLint Versions
 
-The 2.0 versions supports ESLint v9. It may still work with older versions of ESLint but we no longer test against it. If you need ESLint v8 support, use 1.X.
+The 2.0 version supports ESLint v9. It may still work with older versions of ESLint but we no longer test against it. If you need ESLint v8 support, use 1.X.
 
 # TypeScript
 
