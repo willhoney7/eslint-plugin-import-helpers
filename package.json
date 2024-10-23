@@ -1,6 +1,6 @@
 {
 	"name": "eslint-plugin-import-helpers",
-	"version": "2.0.0",
+	"version": "2.0.1",
 	"description": "ESLint Rules to Aid with Imports",
 	"main": "lib/index.js",
 	"scripts": {
@@ -25,7 +25,7 @@
 	"author": "Will Honey",
 	"license": "MIT",
 	"peerDependencies": {
-		"eslint": "5.x - 8.x"
+		"eslint": "9.x"
 	},
 	"devDependencies": {
 		"@types/node": "^22.7.8",
