@@ -5,10 +5,6 @@ const { test } = require('../utils');
 const ruleTester = new RuleTester();
 const { default: rule } = require('../../lib/rules/order-imports');
 
-function withoutAutofixOutput(test) {
-	return Object.assign({}, test, { output: test.code });
-}
-
 function generateImports(count) {
 	const imports = [];
 	for (let i = 0; i < count; i++) {
@@ -774,65 +770,61 @@ comment3 */", // the spacing here is really sensitive
 			],
 		}),
 		// // member expression of require
-		test(
-			withoutAutofixOutput({
-				code: `
+		test({
+			code: `
 		    var foo = require('./foo').bar;
 		    var fs = require('fs');
 		  `,
-				errors: [
-					{
-						message: '`fs` import should occur before import of `./foo`',
-					},
-				],
-			})
-		),
+			output: null,
+			errors: [
+				{
+					message: '`fs` import should occur before import of `./foo`',
+				},
+			],
+		}),
 		// // nested member expression of require
-		test(
-			withoutAutofixOutput({
-				code: `
+		test({
+			code: `
 		    var foo = require('./foo').bar.bar.bar;
 		    var fs = require('fs');
 		  `,
-				errors: [
-					{
-						message: '`fs` import should occur before import of `./foo`',
-					},
-				],
-			})
-		),
+			output: null,
+			errors: [
+				{
+					message: '`fs` import should occur before import of `./foo`',
+				},
+			],
+		}),
 		// // fix near nested member expression of require with newlines
-		test(
-			withoutAutofixOutput({
-				code: `
+		test({
+			code: `
 		    var foo = require('./foo').bar
 		      .bar
 		      .bar;
 		    var fs = require('fs');
 		  `,
-				errors: [
-					{
-						message: '`fs` import should occur before import of `./foo`',
-					},
-				],
-			})
-		),
+			output: null,
+			errors: [
+				{
+					message: '`fs` import should occur before import of `./foo`',
+				},
+			],
+		}),
 		// // fix nested member expression of require with newlines
-		test(
-			withoutAutofixOutput({
-				code: `
+		test({
+			code: `
 		    var foo = require('./foo');
 		    var fs = require('fs').bar
 		      .bar
 		      .bar;
 		  `,
-				errors: [
-					{
-						message: '`fs` import should occur before import of `./foo`',
-					},
-				],
-			})
-		),
+			output: null,
+			errors: [
+				{
+					message: '`fs` import should occur before import of `./foo`',
+				},
+			],
+		}),
 		test({
 			name: '// Grouping import types',
 			code: `
@@ -1055,12 +1047,7 @@ comment3 */", // the spacing here is really sensitive
 
 		        var index = require('./');
 		      `,
-			output: `
-		        var fs = require('fs'); /* multiline
-				comment */
-
-		        var index = require('./');
-		      `,
+			output: null,
 			options: [
 				{
 					groups: [['module'], ['index']],
@@ -1151,13 +1138,7 @@ comment3 */", // the spacing here is really sensitive
 		        import 'something-else';
 		        import _ from 'lodash';
 		      `,
-			output: `
-		        import path from 'path';
-				import 'loud-rejection';
-
-		        import 'something-else';
-		        import _ from 'lodash';
-		      `,
+			output: null,
 			options: [{ newlinesBetween: 'never' }],
 			errors: [
 				{
@@ -1252,138 +1233,129 @@ comment3 */", // the spacing here is really sensitive
 			{ noTrim: true }
 		),
 		// reorder fix cannot cross non import or require
-		test(
-			withoutAutofixOutput({
-				code: `
+		test({
+			output: null,
+			code: `
 				var relative = require('./relative');
 				fn_call();
 				var fs = require('fs');
 		      `,
-				errors: [
-					{
-						message: '`fs` import should occur before import of `./relative`',
-					},
-				],
-			})
-		),
+			errors: [
+				{
+					message: '`fs` import should occur before import of `./relative`',
+				},
+			],
+		}),
 		// reorder cannot cross non plain requires
-		test(
-			withoutAutofixOutput({
-				code: `
+		test({
+			output: null,
+			code: `
 		        var relative = require('./relative');
 		        var a = require('./value.js')(a);
 		        var fs = require('fs');
 		      `,
-				errors: [
-					{
-						message: '`fs` import should occur before import of `./relative`',
-					},
-				],
-			})
-		),
+			errors: [
+				{
+					message: '`fs` import should occur before import of `./relative`',
+				},
+			],
+		}),
 		// reorder fixes cannot be applied to non plain requires #1
-		test(
-			withoutAutofixOutput({
-				code: `
+		test({
+			output: null,
+			code: `
 		        var relative = require('./relative');
 		        var fs = require('fs')(a);
 		      `,
-				errors: [
-					{
-						message: '`fs` import should occur before import of `./relative`',
-					},
-				],
-			})
-		),
+			errors: [
+				{
+					message: '`fs` import should occur before import of `./relative`',
+				},
+			],
+		}),
 		// reorder fixes cannot be applied to non plain requires #2
-		test(
-			withoutAutofixOutput({
-				code: `
+		test({
+			output: null,
+			code: `
 		        var relative = require('./relative')(a);
 		        var fs = require('fs');
 		      `,
-				errors: [
-					{
-						message: '`fs` import should occur before import of `./relative`',
-					},
-				],
-			})
-		),
+			errors: [
+				{
+					message: '`fs` import should occur before import of `./relative`',
+				},
+			],
+		}),
 		// cannot require in case of not assignement require
-		test(
-			withoutAutofixOutput({
-				code: `
+		test({
+			output: null,
+			code: `
 		        var relative = require('./relative');
 		        require('./aa');
 		        var fs = require('fs');
 		      `,
-				errors: [
-					{
-						message: '`fs` import should occur before import of `./relative`',
-					},
-				],
-			})
-		),
+			errors: [
+				{
+					message: '`fs` import should occur before import of `./relative`',
+				},
+			],
+		}),
 		// reorder cannot cross function call (import statement)
-		test(
-			withoutAutofixOutput({
-				code: `
+		test({
+			output: null,
+			code: `
 		        import relative from './relative';
 		        fn_call();
 		        import fs from 'fs';
 		      `,
-				errors: [
-					{
-						message: '`fs` import should occur before import of `./relative`',
-					},
-				],
-			})
-		),
+			errors: [
+				{
+					message: '`fs` import should occur before import of `./relative`',
+				},
+			],
+		}),
 		// reorder cannot cross variable assignemet (import statement)
-		test(
-			withoutAutofixOutput({
-				code: `
+		test({
+			output: null,
+			code: `
 		        import relative from './relative';
 		        var a = 1;
 		        import fs from 'fs';
 		      `,
-				errors: [
-					{
-						message: '`fs` import should occur before import of `./relative`',
-					},
-				],
-			})
-		),
+			errors: [
+				{
+					message: '`fs` import should occur before import of `./relative`',
+				},
+			],
+		}),
 		// reorder cannot cross non plain requires (import statement)
-		test(
-			withoutAutofixOutput({
-				code: `
+		test({
+			output: null,
+			code: `
 		        import relative from './relative';
 		        var a = require('./value.js')(a);
 		        import fs from 'fs';
 		      `,
-				errors: [
-					{
-						message: '`fs` import should occur before import of `./relative`',
-					},
-				],
-			})
-		),
+			errors: [
+				{
+					message: '`fs` import should occur before import of `./relative`',
+				},
+			],
+		}),
 		// cannot reorder in case of not assignement import
-		test(
-			withoutAutofixOutput({
-				code: `
+		test({
+			output: null,
+			code: `
 		        import relative from './relative';
 		        import './aa';
 		        import fs from 'fs';
 		      `,
-				errors: [
-					{
-						message: '`fs` import should occur before import of `./relative`',
-					},
-				],
-			})
-		),
+			errors: [
+				{
+					message: '`fs` import should occur before import of `./relative`',
+				},
+			],
+		}),
 		test({
 			name: 'fix incorrect order with @typescript-eslint/parser',
 			code: `
@@ -1394,7 +1366,9 @@ comment3 */", // the spacing here is really sensitive
 		        var fs = require('fs');
 		        var relative = require('./relative');
 		      `,
-			parser: require.resolve('@typescript-eslint/parser'),
+			languageOptions: {
+				parser: require('@typescript-eslint/parser'),
+			},
 			errors: [
 				{
 					message: '`fs` import should occur before import of `./relative`',

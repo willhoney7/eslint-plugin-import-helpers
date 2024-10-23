@@ -6,6 +6,13 @@
 
 This package was created to supplement the rules provided by [eslint-plugin-import](https://github.com/benmosher/eslint-plugin-import). There are a lot of great rules in there, but we found it missing a few key use cases.
 
+# Alternatives
+
+> [!TIP]
+> Use Prettier!
+
+I recommend using [@ianvs/prettier-plugin-sort-imports](https://github.com/IanVS/prettier-plugin-sort-imports) instead of this ESLint plugin for sorting imports. It works really well and I think Prettier is better suited for formatting-related rules.
+
 # Rules
 
 #### [`order-imports`]
@@ -82,9 +89,15 @@ To add a rule, update your `.eslintrc.(yml|json|js)`:
 }
 ```
 
+# ESLint Versions
+
+The 2.0 version supports ESLint v9. It may still work with older versions of ESLint but we no longer test against it. If you need ESLint v8 support, use 1.X.
+
 # TypeScript
 
 To use this plugin with TypeScript, you must use the TypeScript parser for ESLint. See [@typescript-eslint/parser](https://github.com/typescript-eslint/typescript-eslint/tree/master/packages/parser) for more details.
+
+Please note that the import sorter does not currently work with `type` imports.
 
 # Working with This Repo
 
@@ -92,7 +105,7 @@ To use this plugin with TypeScript, you must use the TypeScript parser for ESLin
 
 | Name                          | Version |
 | ----------------------------- | ------- |
-| [node.js](https://nodejs.org) | 16.x    |
+| [node.js](https://nodejs.org) | 22.x    |
 
 ## Running Tests
 
