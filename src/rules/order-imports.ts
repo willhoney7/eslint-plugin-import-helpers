@@ -191,10 +191,13 @@ function canCrossNodeWhileReorder(node: NodeOrToken): boolean {
 function canReorderItems(firstNode: NodeOrToken, secondNode: NodeOrToken): boolean {
 	const parent = firstNode.parent;
 	const firstIndex = parent.body.indexOf(firstNode);
-	const secondIndex = parent.body.indexOf(secondNode);
-	const nodesBetween = parent.body.slice(firstIndex, secondIndex + 1);
-	for (const nodeBetween of nodesBetween) {
-		if (!canCrossNodeWhileReorder(nodeBetween)) {
+	const secondIndex = parent.body.indexOf(secondNode, firstIndex);
+	if (firstIndex === -1 || secondIndex === -1) {
+		return false;
+	}
+
+	for (let i = firstIndex; i <= secondIndex; i++) {
+		if (!canCrossNodeWhileReorder(parent.body[i])) {
 			return false;
 		}
 	}
