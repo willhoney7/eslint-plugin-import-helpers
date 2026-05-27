@@ -8,6 +8,8 @@ This package was created to supplement the rules provided by [eslint-plugin-impo
 
 # Alternatives
 
+**This package is minimally maintained! Use prettier (or oxfmt)!**
+
 > [!TIP]
 > Use Prettier!
 
