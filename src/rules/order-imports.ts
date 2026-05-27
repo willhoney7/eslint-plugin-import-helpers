@@ -49,8 +49,12 @@ function reverse(array: Imported[]) {
 function getTokensOrCommentsAfter(sourceCode, node, count): NodeOrToken[] {
 	let currentNodeOrToken = node;
 	const result: NodeOrToken = [];
+	const getTokenAfter = (n) => {
+		if (sourceCode.getTokenAfter) return sourceCode.getTokenAfter(n, { includeComments: true });
+		return sourceCode.getTokenOrCommentAfter(n);
+	};
 	for (let i = 0; i < count; i++) {
-		currentNodeOrToken = sourceCode.getTokenOrCommentAfter(currentNodeOrToken);
+		currentNodeOrToken = getTokenAfter(currentNodeOrToken);
 		if (currentNodeOrToken == null) {
 			break;
 		}
@@ -62,8 +66,12 @@ function getTokensOrCommentsAfter(sourceCode, node, count): NodeOrToken[] {
 function getTokensOrCommentsBefore(sourceCode, node, count): NodeOrToken[] {
 	let currentNodeOrToken = node;
 	const result: NodeOrToken = [];
+	const getTokenBefore = (n) => {
+		if (sourceCode.getTokenBefore) return sourceCode.getTokenBefore(n, { includeComments: true });
+		return sourceCode.getTokenOrCommentBefore(n);
+	};
 	for (let i = 0; i < count; i++) {
-		currentNodeOrToken = sourceCode.getTokenOrCommentBefore(currentNodeOrToken);
+		currentNodeOrToken = getTokenBefore(currentNodeOrToken);
 		if (currentNodeOrToken == null) {
 			break;
 		}
@@ -202,7 +210,7 @@ function canReorderItems(firstNode: NodeOrToken, secondNode: NodeOrToken): boole
 }
 
 function fixOutOfOrder(context, firstNode: NodeOrToken, secondNode: NodeOrToken, order: 'before' | 'after'): void {
-	const sourceCode = context.getSourceCode();
+	const sourceCode = context.sourceCode || context.getSourceCode();
 
 	const firstRoot = findRootNode(firstNode.node);
 	const firstRootStart = findStartOfLineWithComments(sourceCode, firstRoot);
@@ -382,7 +390,8 @@ function convertGroupsToRanks(groups: Groups): Ranks {
 
 function fixNewLineAfterImport(context, previousImport) {
 	const prevRoot = findRootNode(previousImport.node);
-	const tokensToEndOfLine = takeTokensAfterWhile(context.getSourceCode(), prevRoot, commentOnSameLineAs(prevRoot));
+	const sourceCode = context.sourceCode || context.getSourceCode();
+	const tokensToEndOfLine = takeTokensAfterWhile(sourceCode, prevRoot, commentOnSameLineAs(prevRoot));
 
 	let endOfLine = prevRoot.range[1];
 	if (tokensToEndOfLine.length > 0) {
@@ -392,7 +401,7 @@ function fixNewLineAfterImport(context, previousImport) {
 }
 
 function removeNewLineAfterImport(context, currentImport, previousImport) {
-	const sourceCode = context.getSourceCode();
+	const sourceCode = context.sourceCode || context.getSourceCode();
 	const prevRoot = findRootNode(previousImport.node);
 	const currRoot = findRootNode(currentImport.node);
 	const rangeToRemove = [
@@ -411,9 +420,11 @@ function makeNewlinesBetweenReport(
 	newlinesBetweenImports: NewLinesBetweenOption
 ): void {
 	const getNumberOfEmptyLinesBetween = (currentImport: Imported, previousImport: Imported): number => {
-		const linesBetweenImports = context
-			.getSourceCode()
-			.lines.slice(previousImport.node.loc.end.line, currentImport.node.loc.start.line - 1);
+		const sourceCode = context.sourceCode || context.getSourceCode();
+		const linesBetweenImports = sourceCode.lines.slice(
+			previousImport.node.loc.end.line,
+			currentImport.node.loc.start.line - 1
+		);
 
 		return linesBetweenImports.filter((line: any) => !line.trim().length).length;
 	};
